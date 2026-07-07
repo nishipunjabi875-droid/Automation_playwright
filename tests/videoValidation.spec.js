@@ -82,7 +82,13 @@ test.describe('Product Video Playback Validation Suite', () => {
     test(`Validate Video for: ${ProductName}`, async ({ page }) => {
       // Resolve dynamic workspace path if using mock templates
       const projectDir = path.resolve(__dirname, '..').replace(/\\/g, '/');
-      const resolvedUrl = ProductURL.replace('${PROJECT_DIR}', projectDir);
+      let resolvedUrl = ProductURL.replace('${PROJECT_DIR}', projectDir);
+
+      // Beta domain redirect (Rewrites live woodenstreet.com urls to beta.teamwoodenstreet.com as requested)
+      const targetDomain = process.env.TARGET_DOMAIN || 'https://beta.teamwoodenstreet.com';
+      if (targetDomain && resolvedUrl.includes('woodenstreet.com')) {
+        resolvedUrl = resolvedUrl.replace(/https?:\/\/(www\.)?woodenstreet\.com/, targetDomain);
+      }
 
       const startTime = Date.now();
       const testResult = {
@@ -96,6 +102,7 @@ test.describe('Product Video Playback Validation Suite', () => {
         videoLoaded: false,
         videoUrl: '',
         videoMappedCorrectly: 'N/A',
+        hasDuplicates: false,
         status: 'FAIL',
         failureReason: '',
         screenshotPath: '',
@@ -348,7 +355,54 @@ test.describe('Product Video Playback Validation Suite', () => {
           throw new Error('No YouTube iframe or self-hosted `<video>` tag could be identified inside the player.');
         }
 
-        // 8. Mapping verification (Verify that the correct video is mapped to the product)
+        // 8. Duplicacy validation (Scan all video elements to check for redundant uploads of the same video source)
+        console.log('  -> Scanning page for duplicate video source uploads...');
+        const videoElements = page.locator('video, iframe');
+        const elementCount = await videoElements.count();
+        const urls = [];
+        
+        for (let i = 0; i < elementCount; i++) {
+          const el = videoElements.nth(i);
+          
+          // Filter out Swiper slide duplicates to avoid false positives in looping swiper components
+          const isClone = await el.evaluate(node => {
+            let curr = node;
+            while (curr) {
+              if (curr.classList && (curr.classList.contains('swiper-slide-duplicate') || curr.classList.contains('clone'))) {
+                return true;
+              }
+              curr = curr.parentElement;
+            }
+            return false;
+          });
+          if (isClone) continue;
+
+          let src = await el.getAttribute('src').catch(() => '');
+          if (!src) {
+            const sourceTag = el.locator('source').first();
+            if (await sourceTag.count() > 0) {
+              src = await sourceTag.getAttribute('src').catch(() => '');
+            }
+          }
+          if (src) {
+            // Strip any query strings/anchors and normalize URL
+            const normalized = src.split('?')[0].trim().toLowerCase();
+            urls.push(normalized);
+          }
+        }
+
+        const duplicates = urls.filter((url, index) => urls.indexOf(url) !== index);
+        const uniqueDuplicates = [...new Set(duplicates)];
+        
+        if (uniqueDuplicates.length > 0) {
+          testResult.hasDuplicates = true;
+          throw new Error(`Duplicate video uploads detected on product page: ${uniqueDuplicates.join(', ')}`);
+        } else {
+          testResult.hasDuplicates = false;
+          console.log('  -> Checked duplicacy: No duplicate video uploads found.');
+        }
+
+        // 9. Mapping verification (Verify that the correct video is mapped to the product)
         if (ExpectedVideo) {
           const expectedLower = ExpectedVideo.toLowerCase().trim();
           const actualLower = (testResult.videoUrl || '').toLowerCase();

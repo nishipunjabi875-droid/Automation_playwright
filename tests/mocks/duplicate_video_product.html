@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Duplicate Product Videos</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 30px; background: #f3f4f6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    #play-btn { background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
+    #video-container { display: none; margin-top: 25px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Duplicate Sofa Videos</h2>
+    <p>This mock page has duplicate uploads of the exact same video file.</p>
+    <button id="play-btn">Play Product Video</button>
+    
+    <div id="video-container">
+      <!-- First upload of the video -->
+      <video id="video-1" width="260" height="150" controls>
+        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm">
+      </video>
+      
+      <!-- Second upload of the exact same video (Duplicacy) -->
+      <video id="video-2" width="260" height="150" controls>
+        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm">
+      </video>
+    </div>
+  </div>
+  <script>
+    document.getElementById('play-btn').addEventListener('click', () => {
+      document.getElementById('video-container').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

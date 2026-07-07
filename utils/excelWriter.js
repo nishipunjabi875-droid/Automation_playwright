@@ -26,7 +26,7 @@ async function writeExcel(results, outputPath) {
   dateRow.getCell(1).font = { name: 'Segoe UI', size: 10, italic: true, color: { argb: 'FF595959' } };
   sheet.addRow([]);
 
-  // Setup Column Headers (14 columns including mapping verification)
+  // Setup Column Headers (15 columns including duplicacy check)
   const headers = [
     'Product Name',
     'Product URL',
@@ -38,6 +38,7 @@ async function writeExcel(results, outputPath) {
     'Video Loaded (Yes/No)',
     'Video URL',
     'Video Mapped Correctly (Yes/No/NA)',
+    'Duplicate Videos (Yes/No)',
     'Status',
     'Failure Reason',
     'Screenshot Path',
@@ -81,6 +82,7 @@ async function writeExcel(results, outputPath) {
       item.videoLoaded ? 'Yes' : 'No',
       item.videoUrl || '',
       item.videoMappedCorrectly || 'N/A',
+      item.hasDuplicates ? 'Yes' : 'No',
       item.status, // PASS or FAIL
       item.failureReason || '',
       item.screenshotPath || '',
@@ -126,8 +128,21 @@ async function writeExcel(results, outputPath) {
       };
     }
 
-    // Format Status Cell (11)
-    const statusCell = row.getCell(11);
+    // Format Duplicate Videos Cell (11)
+    const dupCell = row.getCell(11);
+    if (item.hasDuplicates) {
+      dupCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FF721C24' } };
+      dupCell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFF8D7DA' }
+      };
+    } else {
+      dupCell.font = { name: 'Segoe UI', size: 10, color: { argb: 'FF276A3C' } };
+    }
+
+    // Format Status Cell (12)
+    const statusCell = row.getCell(12);
     if (item.status === 'PASS') {
       statusCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FF276A3C' } };
       statusCell.fill = {

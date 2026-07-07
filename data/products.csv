@@ -4,5 +4,6 @@ Lorenz 3-Seater Sofa (Live Slider),https://www.woodenstreet.com/product/lorenz-3
 Gallery Tab Product (Videos Tab),file:///${PROJECT_DIR}/tests/mocks/gallery_tab_product.html,#videos-tab,flower
 Wooden TV Unit (YouTube Embed),file:///${PROJECT_DIR}/tests/mocks/youtube_product.html,#play-btn,AF0rbfTkS_A
 Luxury Sofa (HTML5 Video),file:///${PROJECT_DIR}/tests/mocks/html5_product.html,#play-btn,flower
+Duplicate Product (HTML5 Video),file:///${PROJECT_DIR}/tests/mocks/duplicate_video_product.html,#play-btn,flower
 Dining Table (Missing Selector),file:///${PROJECT_DIR}/tests/mocks/missing_video_product.html,#play-btn,
 Broken Product Page (404 Page),file:///${PROJECT_DIR}/tests/mocks/404_product.html,#play-btn,
