@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Luxury Sofa</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 30px; background: #f3f4f6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    #play-btn { background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.2s; }
+    #play-btn:hover { background: #0056b3; }
+    #video-container { display: none; margin-top: 25px; border-radius: 8px; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Luxury Velvet Sofa</h2>
+    <p>Ultra comfortable velvet sofa (Royal Blue Upholstery).</p>
+    <button id="play-btn">Play Product Video</button>
+    <div id="video-container">
+      <!-- HTML5 Video element using a public sample video file -->
+      <video id="html5-video" width="540" height="304" controls>
+        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+  <script>
+    document.getElementById('play-btn').addEventListener('click', () => {
+      document.getElementById('video-container').style.display = 'block';
+      const video = document.getElementById('html5-video');
+      video.play().catch(() => {});
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wooden TV Unit</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 30px; background: #f3f4f6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    #play-btn { background: #ff0000; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.2s; }
+    #play-btn:hover { background: #cc0000; }
+    #video-container { display: none; margin-top: 25px; border-radius: 8px; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Natalia Sheesham Wood Tv Unit</h2>
+    <p>Premium quality TV unit with shelf storage (Honey Finish).</p>
+    <button id="play-btn">Play Product Video</button>
+    <div id="video-container">
+      <!-- YouTube Embed Iframe -->
+      <iframe width="540" height="304" src="https://www.youtube.com/embed/AF0rbfTkS_A?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+  <script>
+    document.getElementById('play-btn').addEventListener('click', () => {
+      document.getElementById('video-container').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

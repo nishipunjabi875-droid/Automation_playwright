@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Playwright reports and test results
+playwright-report/
+test-results/
+Validation_Report.html
+*.xlsx
+report.zip
+report_unzipped/
+logs/
+results/
+reports/
+scratch/
+
+# Images/Artifacts (excluding source assets if any)
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# System files
+.DS_Store
+Thumbs.db

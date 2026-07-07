@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gallery Tab Product</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 30px; background: #f3f4f6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+    .tab-btn { background: #e5e7eb; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    .tab-btn.active { background: #1f4e78; color: white; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .video-tile { display: inline-block; position: relative; width: 200px; height: 120px; background: #000; border-radius: 8px; cursor: pointer; overflow: hidden; }
+    .video-tile::after { content: '▶'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 32px; opacity: 0.8; }
+    .video-player-modal { display: none; margin-top: 20px; border-radius: 8px; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Multi-Gallery Product Page</h2>
+    
+    <div class="tabs">
+      <button class="tab-btn active" id="photos-tab">Photos</button>
+      <!-- The "Videos" tab button that Playwright will click -->
+      <button class="tab-btn" id="videos-tab">Videos</button>
+    </div>
+
+    <div id="photos-content" class="tab-content active">
+      <p>Product photos gallery container.</p>
+    </div>
+
+    <!-- Hidden until "Videos" tab is clicked -->
+    <div id="videos-content" class="tab-content">
+      <p>Select a video to play:</p>
+      <div class="video-tile" id="tile-1"></div>
+    </div>
+
+    <div class="video-player-modal" id="modal-container">
+      <video id="html5-video" width="540" height="304" controls>
+        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm">
+      </video>
+    </div>
+  </div>
+
+  <script>
+    const photosTab = document.getElementById('photos-tab');
+    const videosTab = document.getElementById('videos-tab');
+    const photosContent = document.getElementById('photos-content');
+    const videosContent = document.getElementById('videos-content');
+    const videoTile = document.getElementById('tile-1');
+    const modalContainer = document.getElementById('modal-container');
+    const video = document.getElementById('html5-video');
+
+    videosTab.addEventListener('click', () => {
+      photosTab.classList.remove('active');
+      videosTab.classList.add('active');
+      photosContent.classList.remove('active');
+      videosContent.classList.add('active');
+    });
+
+    photosTab.addEventListener('click', () => {
+      videosTab.classList.remove('active');
+      photosTab.classList.add('active');
+      videosContent.classList.remove('active');
+      photosContent.classList.add('active');
+    });
+
+    videoTile.addEventListener('click', () => {
+      modalContainer.style.display = 'block';
+      video.play().catch(() => {});
+    });
+  </script>
+</body>
+</html>

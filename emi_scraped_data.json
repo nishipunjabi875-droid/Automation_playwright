@@ -1,0 +1,834 @@
+[
+  {
+    "Bankname": "HDFC Credit Cards",
+    "image": "https://cdn.razorpay.com/bank/HDFC.gif",
+    "link": "HDFC_Bank",
+    "nocost": "yes",
+    "Offer_text": 2147,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 0,
+        "emi": "No Cost EMI",
+        "emiamount": "14,333",
+        "totalamount": "42,999"
+      },
+      {
+        "month": "6",
+        "interest": 18,
+        "emi": "",
+        "emiamount": "7,547",
+        "totalamount": "45,284"
+      },
+      {
+        "month": "9",
+        "interest": 18,
+        "emi": "",
+        "emiamount": "5,143",
+        "totalamount": "46,288"
+      },
+      {
+        "month": "12",
+        "interest": 18,
+        "emi": "",
+        "emiamount": "3,942",
+        "totalamount": "47,306"
+      },
+      {
+        "month": "18",
+        "interest": 18,
+        "emi": "",
+        "emiamount": "2,744",
+        "totalamount": "49,385"
+      },
+      {
+        "month": "24",
+        "interest": 18,
+        "emi": "",
+        "emiamount": "2,147",
+        "totalamount": "51,521"
+      }
+    ]
+  },
+  {
+    "Bankname": "ICICI Bank",
+    "image": "https://cdn.razorpay.com/bank/ICIC.gif",
+    "link": "ICICI_Bank",
+    "nocost": "yes",
+    "Offer_text": 2105,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 0,
+        "emi": "No Cost EMI",
+        "emiamount": "14,333",
+        "totalamount": "42,999"
+      },
+      {
+        "month": "6",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "7,504",
+        "totalamount": "45,027"
+      },
+      {
+        "month": "9",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "5,102",
+        "totalamount": "45,914"
+      },
+      {
+        "month": "12",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "3,901",
+        "totalamount": "46,814"
+      },
+      {
+        "month": "18",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "2,703",
+        "totalamount": "48,646"
+      },
+      {
+        "month": "24",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "2,105",
+        "totalamount": "50,524"
+      }
+    ]
+  },
+  {
+    "Bankname": "Axis Bank",
+    "image": "https://cdn.razorpay.com/bank/UTIB.gif",
+    "link": "AXIS_Bank",
+    "nocost": "yes",
+    "Offer_text": 2105,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 0,
+        "emi": "No Cost EMI",
+        "emiamount": "14,333",
+        "totalamount": "42,999"
+      },
+      {
+        "month": "6",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "7,505",
+        "totalamount": "45,028"
+      },
+      {
+        "month": "9",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "5,102",
+        "totalamount": "45,916"
+      },
+      {
+        "month": "12",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "3,901",
+        "totalamount": "46,816"
+      },
+      {
+        "month": "18",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,703",
+        "totalamount": "48,650"
+      },
+      {
+        "month": "24",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,105",
+        "totalamount": "50,529"
+      }
+    ]
+  },
+  {
+    "Bankname": "State Bank of India",
+    "image": "https://cdn.razorpay.com/bank/SBIN.gif",
+    "link": "SBI_bank",
+    "nocost": "yes",
+    "Offer_text": 2111,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 0,
+        "emi": "No Cost EMI",
+        "emiamount": "14,333",
+        "totalamount": "42,999"
+      },
+      {
+        "month": "6",
+        "interest": 16.5,
+        "emi": "",
+        "emiamount": "7,515",
+        "totalamount": "45,092"
+      },
+      {
+        "month": "9",
+        "interest": 16.5,
+        "emi": "",
+        "emiamount": "5,112",
+        "totalamount": "46,009"
+      },
+      {
+        "month": "12",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "3,901",
+        "totalamount": "46,816"
+      },
+      {
+        "month": "18",
+        "interest": 16.25,
+        "emi": "",
+        "emiamount": "2,708",
+        "totalamount": "48,741"
+      },
+      {
+        "month": "24",
+        "interest": 16.25,
+        "emi": "",
+        "emiamount": "2,111",
+        "totalamount": "50,652"
+      }
+    ]
+  },
+  {
+    "Bankname": "American Express",
+    "image": "https://cdn.razorpay.com/bank/AMEX.gif",
+    "link": "AMEX",
+    "nocost": "no",
+    "Offer_text": 2085,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "14,669",
+        "totalamount": "44,006"
+      },
+      {
+        "month": "6",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "7,462",
+        "totalamount": "44,772"
+      },
+      {
+        "month": "9",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "5,061",
+        "totalamount": "45,546"
+      },
+      {
+        "month": "12",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "3,861",
+        "totalamount": "46,329"
+      },
+      {
+        "month": "18",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "2,682",
+        "totalamount": "48,285"
+      },
+      {
+        "month": "24",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "2,085",
+        "totalamount": "50,037"
+      }
+    ]
+  },
+  {
+    "Bankname": "RBL Bank",
+    "image": "https://cdn.razorpay.com/bank/RATN.gif",
+    "link": "RBL_Bank",
+    "nocost": "no",
+    "Offer_text": 2085,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 13,
+        "emi": "",
+        "emiamount": "14,645",
+        "totalamount": "43,934"
+      },
+      {
+        "month": "6",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "7,462",
+        "totalamount": "44,772"
+      },
+      {
+        "month": "9",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "5,081",
+        "totalamount": "45,731"
+      },
+      {
+        "month": "12",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "3,881",
+        "totalamount": "46,572"
+      },
+      {
+        "month": "18",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "2,682",
+        "totalamount": "48,285"
+      },
+      {
+        "month": "24",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "2,085",
+        "totalamount": "50,037"
+      }
+    ]
+  },
+  {
+    "Bankname": "Kotak Mahindra Bank",
+    "image": "https://cdn.razorpay.com/bank/KKBK.gif",
+    "link": "KKBK",
+    "nocost": "no",
+    "Offer_text": 2105,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "14,717",
+        "totalamount": "44,151"
+      },
+      {
+        "month": "6",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "7,505",
+        "totalamount": "45,028"
+      },
+      {
+        "month": "9",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "5,102",
+        "totalamount": "45,916"
+      },
+      {
+        "month": "12",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "3,901",
+        "totalamount": "46,816"
+      },
+      {
+        "month": "18",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,703",
+        "totalamount": "48,650"
+      },
+      {
+        "month": "24",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,105",
+        "totalamount": "50,529"
+      }
+    ]
+  },
+  {
+    "Bankname": "Indusind Bank",
+    "image": "https://cdn.razorpay.com/bank/INDB.gif",
+    "link": "IndusInd_Bank",
+    "nocost": "no",
+    "Offer_text": 2105,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "14,717",
+        "totalamount": "44,151"
+      },
+      {
+        "month": "6",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "7,505",
+        "totalamount": "45,028"
+      },
+      {
+        "month": "9",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "5,102",
+        "totalamount": "45,916"
+      },
+      {
+        "month": "12",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "3,901",
+        "totalamount": "46,816"
+      },
+      {
+        "month": "18",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,703",
+        "totalamount": "48,650"
+      },
+      {
+        "month": "24",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,105",
+        "totalamount": "50,529"
+      },
+      {
+        "month": "36",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "1,512",
+        "totalamount": "54,422"
+      }
+    ]
+  },
+  {
+    "Bankname": "HSBC Credit Cards",
+    "image": "https://cdn.razorpay.com/bank/HSBC.gif",
+    "link": "HSBC_Bank",
+    "nocost": "no",
+    "Offer_text": 2085,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "14,693",
+        "totalamount": "44,078"
+      },
+      {
+        "month": "6",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "7,483",
+        "totalamount": "44,900"
+      },
+      {
+        "month": "9",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "5,081",
+        "totalamount": "45,731"
+      },
+      {
+        "month": "12",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "3,881",
+        "totalamount": "46,572"
+      },
+      {
+        "month": "18",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "2,682",
+        "totalamount": "48,285"
+      },
+      {
+        "month": "24",
+        "interest": 15,
+        "emi": "",
+        "emiamount": "2,085",
+        "totalamount": "50,037"
+      }
+    ]
+  },
+  {
+    "Bankname": "Standard Chartered Bank",
+    "image": "https://cdn.razorpay.com/bank/SCBL.gif",
+    "link": "Standard_Bank",
+    "nocost": "no",
+    "Offer_text": 3861,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 11.88,
+        "emi": "",
+        "emiamount": "14,618",
+        "totalamount": "43,853"
+      },
+      {
+        "month": "6",
+        "interest": 13,
+        "emi": "",
+        "emiamount": "7,441",
+        "totalamount": "44,644"
+      },
+      {
+        "month": "9",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "5,061",
+        "totalamount": "45,546"
+      },
+      {
+        "month": "12",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "3,861",
+        "totalamount": "46,329"
+      }
+    ]
+  },
+  {
+    "Bankname": "Yes Bank",
+    "image": "https://cdn.razorpay.com/bank/YESB.gif",
+    "link": "YES_Bank",
+    "nocost": "yes",
+    "Offer_text": 2105,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 0,
+        "emi": "No Cost EMI",
+        "emiamount": "14,333",
+        "totalamount": "42,999"
+      },
+      {
+        "month": "6",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "7,505",
+        "totalamount": "45,028"
+      },
+      {
+        "month": "9",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "5,102",
+        "totalamount": "45,916"
+      },
+      {
+        "month": "12",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "3,901",
+        "totalamount": "46,816"
+      },
+      {
+        "month": "18",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,703",
+        "totalamount": "48,650"
+      },
+      {
+        "month": "24",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,105",
+        "totalamount": "50,529"
+      }
+    ]
+  },
+  {
+    "Bankname": "BOBCARD",
+    "image": "https://cdn.razorpay.com/bank/BARB.gif",
+    "link": "BARB",
+    "nocost": "no",
+    "Offer_text": 2105,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "14,717",
+        "totalamount": "44,151"
+      },
+      {
+        "month": "6",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "7,505",
+        "totalamount": "45,028"
+      },
+      {
+        "month": "9",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "5,102",
+        "totalamount": "45,916"
+      },
+      {
+        "month": "12",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "3,901",
+        "totalamount": "46,816"
+      },
+      {
+        "month": "18",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,703",
+        "totalamount": "48,650"
+      },
+      {
+        "month": "24",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,105",
+        "totalamount": "50,529"
+      }
+    ]
+  },
+  {
+    "Bankname": "Federal Bank",
+    "image": "https://cdn.razorpay.com/bank/FDRL.gif",
+    "link": "FDRL",
+    "nocost": "no",
+    "Offer_text": 2105,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "14,717",
+        "totalamount": "44,150"
+      },
+      {
+        "month": "6",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "7,504",
+        "totalamount": "45,027"
+      },
+      {
+        "month": "9",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "5,102",
+        "totalamount": "45,914"
+      },
+      {
+        "month": "12",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "3,901",
+        "totalamount": "46,814"
+      },
+      {
+        "month": "18",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "2,703",
+        "totalamount": "48,646"
+      },
+      {
+        "month": "24",
+        "interest": 15.99,
+        "emi": "",
+        "emiamount": "2,105",
+        "totalamount": "50,524"
+      }
+    ]
+  },
+  {
+    "Bankname": "OneCard",
+    "image": "https://cdn.razorpay.com/cardless_emi-sq/onecard.png",
+    "link": "onecard",
+    "nocost": "no",
+    "Offer_text": 2105,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "14,717",
+        "totalamount": "44,151"
+      },
+      {
+        "month": "6",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "7,505",
+        "totalamount": "45,028"
+      },
+      {
+        "month": "9",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "5,102",
+        "totalamount": "45,916"
+      },
+      {
+        "month": "12",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "3,901",
+        "totalamount": "46,816"
+      },
+      {
+        "month": "18",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,703",
+        "totalamount": "48,650"
+      },
+      {
+        "month": "24",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,105",
+        "totalamount": "50,529"
+      }
+    ]
+  },
+  {
+    "Bankname": "IDFC First Bank",
+    "image": "https://cdn.razorpay.com/bank/IDFB.gif",
+    "link": "IDFC_First_Bank",
+    "nocost": "no",
+    "Offer_text": 2105,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "14,717",
+        "totalamount": "44,151"
+      },
+      {
+        "month": "6",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "7,505",
+        "totalamount": "45,028"
+      },
+      {
+        "month": "9",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "5,102",
+        "totalamount": "45,916"
+      },
+      {
+        "month": "12",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "3,901",
+        "totalamount": "46,816"
+      },
+      {
+        "month": "18",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,703",
+        "totalamount": "48,650"
+      },
+      {
+        "month": "24",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "2,105",
+        "totalamount": "50,529"
+      },
+      {
+        "month": "36",
+        "interest": 16,
+        "emi": "",
+        "emiamount": "1,512",
+        "totalamount": "54,422"
+      }
+    ]
+  },
+  {
+    "Bankname": "AU Small Finance Bank",
+    "image": "https://cdn.razorpay.com/bank/AUBL.gif",
+    "link": "AUBL",
+    "nocost": "no",
+    "Offer_text": 2065,
+    "tc_link": "emi",
+    "EMI_Options": [
+      {
+        "month": "3",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "14,669",
+        "totalamount": "44,006"
+      },
+      {
+        "month": "6",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "7,462",
+        "totalamount": "44,772"
+      },
+      {
+        "month": "9",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "5,061",
+        "totalamount": "45,546"
+      },
+      {
+        "month": "12",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "3,861",
+        "totalamount": "46,329"
+      },
+      {
+        "month": "18",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "2,662",
+        "totalamount": "47,921"
+      },
+      {
+        "month": "24",
+        "interest": 14,
+        "emi": "",
+        "emiamount": "2,065",
+        "totalamount": "49,548"
+      }
+    ]
+  }
+]
