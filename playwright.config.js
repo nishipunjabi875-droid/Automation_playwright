@@ -1,6 +1,7 @@
 const { defineConfig } = require('@playwright/test');
 
 module.exports = defineConfig({
+  workers: 8,
   globalTeardown: require.resolve('./utils/teardown.js'),
   fullyParallel: true,
   use: {
