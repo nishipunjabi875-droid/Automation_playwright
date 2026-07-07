@@ -52,7 +52,8 @@ if (process.env.PRODUCT_URL && process.env.VIDEO_SELECTOR) {
   products = [{
     ProductName: process.env.PRODUCT_NAME || 'Ad-hoc Product Check',
     ProductURL: process.env.PRODUCT_URL,
-    VideoSelector: process.env.VIDEO_SELECTOR
+    VideoSelector: process.env.VIDEO_SELECTOR,
+    ExpectedVideo: process.env.EXPECTED_VIDEO || ''
   }];
 } else {
   const csvPath = path.resolve(__dirname, '../data/products.csv');
@@ -73,7 +74,7 @@ test.describe('Product Video Playback Validation Suite', () => {
 
   // Dynamically generate a test for each product from the CSV
   for (const product of products) {
-    const { ProductName, ProductURL, VideoSelector } = product;
+    const { ProductName, ProductURL, VideoSelector, ExpectedVideo } = product;
 
     // Skip empty or malformed rows
     if (!ProductName || !ProductURL) continue;
@@ -88,11 +89,13 @@ test.describe('Product Video Playback Validation Suite', () => {
         productName: ProductName,
         productUrl: resolvedUrl,
         videoSelector: VideoSelector,
+        expectedVideo: ExpectedVideo || '',
         videoFound: false,
         clickSuccessful: false,
         playerOpened: false,
         videoLoaded: false,
         videoUrl: '',
+        videoMappedCorrectly: 'N/A',
         status: 'FAIL',
         failureReason: '',
         screenshotPath: '',
@@ -343,6 +346,21 @@ test.describe('Product Video Playback Validation Suite', () => {
           testResult.videoLoaded = true;
         } else {
           throw new Error('No YouTube iframe or self-hosted `<video>` tag could be identified inside the player.');
+        }
+
+        // 8. Mapping verification (Verify that the correct video is mapped to the product)
+        if (ExpectedVideo) {
+          const expectedLower = ExpectedVideo.toLowerCase().trim();
+          const actualLower = (testResult.videoUrl || '').toLowerCase();
+          if (actualLower.includes(expectedLower)) {
+            testResult.videoMappedCorrectly = 'Yes';
+            console.log(`  -> Mapping Match: Video URL contains expected identifier "${ExpectedVideo}".`);
+          } else {
+            testResult.videoMappedCorrectly = 'No';
+            throw new Error(`Video mapping mismatch: Expected video to contain "${ExpectedVideo}" but loaded URL was "${testResult.videoUrl || 'None'}"`);
+          }
+        } else {
+          testResult.videoMappedCorrectly = 'N/A';
         }
 
         // Mark test pass

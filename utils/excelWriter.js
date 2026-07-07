@@ -19,23 +19,25 @@ async function writeExcel(results, outputPath) {
 
   // Title Block
   sheet.addRow([]);
-  const titleRow = sheet.addRow(['PRODUCT VIDEO VALIDATION REPORT']);
+  const titleRow = sheet.addRow(['PRODUCT VIDEO VALIDATION & MAPPING REPORT']);
   titleRow.getCell(1).font = { name: 'Segoe UI', size: 16, bold: true, color: { argb: 'FF1F4E78' } };
   
   const dateRow = sheet.addRow([`Generated: ${new Date().toLocaleString()}`]);
   dateRow.getCell(1).font = { name: 'Segoe UI', size: 10, italic: true, color: { argb: 'FF595959' } };
   sheet.addRow([]);
 
-  // Setup Column Headers
+  // Setup Column Headers (14 columns including mapping verification)
   const headers = [
     'Product Name',
     'Product URL',
     'Video Selector',
+    'Expected Video',
     'Video Found (Yes/No)',
     'Click Successful (Yes/No)',
     'Player Opened (Yes/No)',
     'Video Loaded (Yes/No)',
     'Video URL',
+    'Video Mapped Correctly (Yes/No/NA)',
     'Status',
     'Failure Reason',
     'Screenshot Path',
@@ -72,11 +74,13 @@ async function writeExcel(results, outputPath) {
       item.productName,
       item.productUrl,
       item.videoSelector,
+      item.expectedVideo || '',
       item.videoFound ? 'Yes' : 'No',
       item.clickSuccessful ? 'Yes' : 'No',
       item.playerOpened ? 'Yes' : 'No',
       item.videoLoaded ? 'Yes' : 'No',
       item.videoUrl || '',
+      item.videoMappedCorrectly || 'N/A',
       item.status, // PASS or FAIL
       item.failureReason || '',
       item.screenshotPath || '',
@@ -109,8 +113,21 @@ async function writeExcel(results, outputPath) {
     const urlCell = row.getCell(2);
     urlCell.font = { name: 'Segoe UI', size: 10, color: { argb: 'FF0563C1' }, underline: true };
 
-    // Format Status Cell (9)
-    const statusCell = row.getCell(9);
+    // Format Video Mapped Correctly Cell (10)
+    const mappingCell = row.getCell(10);
+    if (item.videoMappedCorrectly === 'Yes') {
+      mappingCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FF276A3C' } };
+    } else if (item.videoMappedCorrectly === 'No') {
+      mappingCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FF721C24' } };
+      mappingCell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFF8D7DA' } // Light Red
+      };
+    }
+
+    // Format Status Cell (11)
+    const statusCell = row.getCell(11);
     if (item.status === 'PASS') {
       statusCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FF276A3C' } };
       statusCell.fill = {
