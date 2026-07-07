@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
 
-// Read CSV file synchronously to dynamically declare Playwright tests
+// Read CSV/TSV file synchronously to dynamically declare Playwright tests
 function readCSVSync(filePath) {
   if (!fs.existsSync(filePath)) {
     throw new Error(`CSV file not found: ${filePath}`);
@@ -12,10 +12,14 @@ function readCSVSync(filePath) {
   const lines = content.split(/\r?\n/).filter(line => line.trim() !== '');
   if (lines.length === 0) return [];
 
+  // Automatically detect separator (tab vs comma)
+  const firstLine = lines[0];
+  const delimiter = firstLine.includes('\t') ? '\t' : ',';
+
   // Parse header
-  const headers = lines[0].split(',').map(h => h.trim());
+  const headers = firstLine.split(delimiter).map(h => h.trim());
   
-  // Parse rows (simple RFC 4180 parsing for commas inside quotes)
+  // Parse rows (handles delimiter splitting while respecting quoted strings)
   return lines.slice(1).map(line => {
     const values = [];
     let current = '';
@@ -24,7 +28,7 @@ function readCSVSync(filePath) {
       const char = line[i];
       if (char === '"') {
         inQuotes = !inQuotes;
-      } else if (char === ',' && !inQuotes) {
+      } else if (char === delimiter && !inQuotes) {
         values.push(current.trim());
         current = '';
       } else {
@@ -57,7 +61,34 @@ if (process.env.PRODUCT_URL && process.env.VIDEO_SELECTOR) {
   }];
 } else {
   const csvPath = path.resolve(__dirname, '../data/products.csv');
-  products = readCSVSync(csvPath);
+  const rawRows = readCSVSync(csvPath);
+  
+  // Map row properties dynamically to support both new TSV headers and old CSV headers
+  products = rawRows.map(row => {
+    const name = row['Product Name'] || row['ProductName'] || '';
+    const url = row['Product URL'] || row['ProductURL'] || '';
+    
+    // Default video selectors list if not specified: tries gallery, body slider, tab buttons, etc.
+    const selector = row['VideoSelector'] || row['Video Selector'] || '.image-gallery-thumbnail.hasvideo, .videoSlider .cursor-pointer, .video-tile, #videos-tab, .isvideo img';
+    
+    // Auto-extract expected video filename segment from Video URL if ExpectedVideo is not explicitly provided
+    let expected = row['ExpectedVideo'] || row['Expected Video'] || '';
+    if (!expected) {
+      const videoUrlCol = row['Video URL'] || row['VideoURL'] || '';
+      if (videoUrlCol) {
+        const parts = videoUrlCol.split('/');
+        const filename = parts[parts.length - 1]; // e.g. "wsyt1.mp4"
+        expected = filename.split('.')[0]; // e.g. "wsyt1"
+      }
+    }
+    
+    return {
+      ProductName: name,
+      ProductURL: url,
+      VideoSelector: selector,
+      ExpectedVideo: expected
+    };
+  });
 }
 
 test.describe('Product Video Playback Validation Suite', () => {
@@ -120,12 +151,9 @@ test.describe('Product Video Playback Validation Suite', () => {
 
           const shouldBlock = 
             type === 'font' || 
-            url.includes('google-analytics') || 
-            url.includes('googletagmanager') || 
             url.includes('facebook.net') || 
             url.includes('hotjar') || 
-            url.includes('doubleclick') ||
-            url.includes('analytics');
+            url.includes('doubleclick');
 
           if (shouldBlock) {
             route.abort();
@@ -163,32 +191,79 @@ test.describe('Product Video Playback Validation Suite', () => {
 
         // Dismiss promo / login modals if present on live pages
         await page.keyboard.press('Escape').catch(() => {});
-        const modalCloseBtn = page.locator('button:text("✕"), [class*="close"], [class*="Close"]');
-        if (await modalCloseBtn.first().isVisible().catch(() => false)) {
-          await modalCloseBtn.first().click().catch(() => {});
-        }
-
-        // 3. Locate the video element
-        // Normalize selector to support both CSS and XPath (e.g. starting with //, /, or ()
-        let normalizedSelector = VideoSelector;
-        if (VideoSelector.startsWith('//') || VideoSelector.startsWith('/') || VideoSelector.startsWith('(') || VideoSelector.includes('[@')) {
-          if (!VideoSelector.startsWith('xpath=')) {
-            normalizedSelector = `xpath=${VideoSelector}`;
+        await page.evaluate(() => {
+          // Click close buttons
+          const closeButtons = document.querySelectorAll('button[aria-label="Close"], button[class*="DialogClose"], button[class*="close"], button[class*="Close"]');
+          closeButtons.forEach(btn => { try { btn.click(); } catch(e){} });
+          
+          // Force remove modal overlays from DOM to prevent interception
+          const dialogs = document.querySelectorAll('[role="dialog"], [class*="modal"], [class*="popup"], [id*="radix-"]');
+          dialogs.forEach(dialog => {
+            try {
+              dialog.style.display = 'none';
+              dialog.remove();
+            } catch(e){}
+          });
+          
+          // Restore body pointer events and scrolling
+          if (document.body) {
+            document.body.style.pointerEvents = 'auto';
+            document.body.style.overflow = 'auto';
           }
+        }).catch(() => {});
+        await page.waitForTimeout(1000);
+
+        // 3. Locate the first visible video element matching the selector(s)
+        const selectors = VideoSelector.split(',').map(s => s.trim());
+        let videoElement = null;
+        let resolvedSelectorUsed = '';
+
+        for (const sel of selectors) {
+          let normalized = sel;
+          if (sel.startsWith('//') || sel.startsWith('/') || sel.startsWith('(') || sel.includes('[@')) {
+            if (!sel.startsWith('xpath=')) {
+              normalized = `xpath=${sel}`;
+            }
+          }
+          const loc = page.locator(normalized);
+          const count = await loc.count().catch(() => 0);
+          for (let i = 0; i < count; i++) {
+            const el = loc.nth(i);
+            if (await el.isVisible().catch(() => false)) {
+              videoElement = el;
+              resolvedSelectorUsed = sel;
+              break;
+            }
+          }
+          if (videoElement) break;
         }
 
-        const videoElement = page.locator(normalizedSelector).first();
+        // Fallback to first element if none are visible immediately (to let expect.toBeVisible wait if needed)
+        if (!videoElement) {
+          let fallbackSelector = VideoSelector;
+          if (fallbackSelector.startsWith('//') || fallbackSelector.startsWith('/') || fallbackSelector.startsWith('(') || fallbackSelector.includes('[@')) {
+            if (!fallbackSelector.startsWith('xpath=')) {
+              fallbackSelector = `xpath=${fallbackSelector}`;
+            }
+          }
+          videoElement = page.locator(fallbackSelector).first();
+          resolvedSelectorUsed = VideoSelector;
+        }
+
         try {
           await expect(videoElement).toBeVisible({ timeout: 15000 });
           testResult.videoFound = true;
-          console.log('  -> Video element is visible on the page.');
+          console.log(`  -> Video element is visible on the page (resolved to: "${resolvedSelectorUsed}").`);
         } catch (err) {
           throw new Error(`Video element selector "${VideoSelector}" not visible on page.`);
         }
 
-        // 4. Click the video play / thumbnail button
+        // 4. Click the video play / thumbnail button (uses force/JS fallback to bypass popups)
         try {
-          await videoElement.click();
+          await videoElement.click({ force: true, timeout: 5000 }).catch(async () => {
+            console.log('  -> Standard click blocked by overlay. Bypassing via JS click evaluation...');
+            await videoElement.evaluate(el => el.click());
+          });
           testResult.clickSuccessful = true;
           console.log('  -> Clicked video trigger successfully.');
         } catch (err) {
@@ -221,7 +296,9 @@ test.describe('Product Video Playback Validation Suite', () => {
             const subElement = page.locator(subSelector).first();
             if (await subElement.isVisible().catch(() => false)) {
               console.log(`  -> Found gallery sub-trigger: "${subSelector}". Clicking it...`);
-              await subElement.click().catch(() => {});
+              await subElement.click({ force: true, timeout: 5000 }).catch(async () => {
+                await subElement.evaluate(el => el.click()).catch(() => {});
+              });
               clickedSubTrigger = true;
               await page.waitForTimeout(2000);
               break;
@@ -240,7 +317,9 @@ test.describe('Product Video Playback Validation Suite', () => {
           const videoInSlide = activeSlide.locator('video, iframe');
           if (await videoInSlide.count() === 0) {
             console.log('  -> Clicking active slide container to trigger video initialization...');
-            await activeSlide.first().click();
+            await activeSlide.first().click({ force: true, timeout: 5000 }).catch(async () => {
+              await activeSlide.first().evaluate(el => el.click()).catch(() => {});
+            });
             await page.waitForTimeout(3000);
           }
         }

@@ -13,8 +13,12 @@ function readCSV(filePath) {
       return reject(new Error(`CSV file not found at path: ${filePath}`));
     }
     
+    // Read the first line to detect separator (tab vs comma)
+    const firstLine = fs.readFileSync(filePath, 'utf-8').split(/\r?\n/)[0];
+    const separator = firstLine.includes('\t') ? '\t' : ',';
+    
     fs.createReadStream(filePath)
-      .pipe(csv())
+      .pipe(csv({ separator }))
       .on('data', (data) => {
         // Clean up keys and values (trim whitespace)
         const cleanedData = {};
