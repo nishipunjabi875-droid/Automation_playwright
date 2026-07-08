@@ -144,7 +144,7 @@ test.describe('Product Video Playback Validation Suite', () => {
       try {
         console.log(`\n[START] Testing product: "${ProductName}"`);
         console.log(`  URL: ${resolvedUrl}`);
-        // Setup request routing to optimize loading speed by blocking heavy assets, images, and trackers
+        // Setup request routing to optimize loading speed by blocking heavy trackers (allowing images and styles to load properly)
         await page.route('**/*', (route) => {
           const req = route.request();
           const type = req.resourceType();
@@ -152,7 +152,6 @@ test.describe('Product Video Playback Validation Suite', () => {
 
           const shouldBlock = 
             type === 'font' || 
-            type === 'image' || // Block image downloads to save bandwidth
             url.includes('facebook') || 
             url.includes('hotjar') || 
             url.includes('doubleclick') ||
@@ -179,7 +178,7 @@ test.describe('Product Video Playback Validation Suite', () => {
         let responseStatus = 200;
         let navigationError = null;
         try {
-          const response = await page.goto(resolvedUrl, { waitUntil: 'domcontentloaded', timeout: 20000 });
+          const response = await page.goto(resolvedUrl, { waitUntil: 'load', timeout: 25000 });
           if (response) {
             responseStatus = response.status();
           }
