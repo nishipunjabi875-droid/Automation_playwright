@@ -535,10 +535,52 @@ test.describe('Product Video Playback Validation Suite', () => {
         testResult.executionTimeMs = duration;
         testResult.executionTime = `${(duration / 1000).toFixed(2)}s`;
 
-        // Write individual test result to a temp JSON file
+        // Write individual test result to a temp JSON file atomically
         const uniqueId = ProductName.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_' + Date.now();
         const tempFilePath = path.join(tempDir, `${uniqueId}.json`);
-        fs.writeFileSync(tempFilePath, JSON.stringify(testResult, null, 2), 'utf-8');
+        const tempTmpFilePath = path.join(tempDir, `${uniqueId}.tmp`);
+        
+        try {
+          fs.writeFileSync(tempTmpFilePath, JSON.stringify(testResult, null, 2), 'utf-8');
+          fs.renameSync(tempTmpFilePath, tempFilePath);
+        } catch (writeErr) {
+          console.error(`Failed to write temp result for ${ProductName}:`, writeErr.message);
+          // Fallback to direct write if rename fails
+          try {
+            fs.writeFileSync(tempFilePath, JSON.stringify(testResult, null, 2), 'utf-8');
+          } catch (e) {}
+        }
+
+        // Calculate real-time progress by scanning the temp results directory
+        let checkedCount = 0;
+        let passedCount = 0;
+        let failedCount = 0;
+
+        try {
+          if (fs.existsSync(tempDir)) {
+            const files = fs.readdirSync(tempDir);
+            for (const file of files) {
+              if (file.endsWith('.json')) {
+                try {
+                  const content = fs.readFileSync(path.join(tempDir, file), 'utf-8');
+                  const data = JSON.parse(content);
+                  checkedCount++;
+                  if (data.status === 'PASS') {
+                    passedCount++;
+                  } else {
+                    failedCount++;
+                  }
+                } catch (parseErr) {
+                  // Ignore JSON parse/read errors during concurrent disk access
+                }
+              }
+            }
+          }
+        } catch (dirErr) {
+          console.error('Failed to read temp directory for real-time progress:', dirErr.message);
+        }
+
+        console.log(`\n[PROGRESS] Videos Checked: ${checkedCount} | Passed: ${passedCount} | Failed: ${failedCount}\n`);
       }
     });
   }
