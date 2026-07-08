@@ -144,7 +144,7 @@ test.describe('Product Video Playback Validation Suite', () => {
       try {
         console.log(`\n[START] Testing product: "${ProductName}"`);
         console.log(`  URL: ${resolvedUrl}`);
-        // Setup request routing to optimize loading speed by blocking heavy assets and trackers
+        // Setup request routing to optimize loading speed by blocking heavy assets, images, and trackers
         await page.route('**/*', (route) => {
           const req = route.request();
           const type = req.resourceType();
@@ -152,9 +152,21 @@ test.describe('Product Video Playback Validation Suite', () => {
 
           const shouldBlock = 
             type === 'font' || 
-            url.includes('facebook.net') || 
+            type === 'image' || // Block image downloads to save bandwidth
+            url.includes('facebook') || 
             url.includes('hotjar') || 
-            url.includes('doubleclick');
+            url.includes('doubleclick') ||
+            url.includes('google-analytics') ||
+            url.includes('googletagmanager') ||
+            url.includes('criteo') ||
+            url.includes('pixel') ||
+            url.includes('analytics') ||
+            url.includes('adservice') ||
+            url.includes('bigatom.ai') ||
+            url.includes('popin.to') ||
+            url.includes('snapchat') ||
+            url.includes('tiktok') ||
+            url.includes('pinterest');
 
           if (shouldBlock) {
             route.abort();
@@ -192,7 +204,7 @@ test.describe('Product Video Playback Validation Suite', () => {
 
         // Wait for the gallery container to render and be visible (ensuring gallery is loaded/hydrated)
         await page.locator('.image-gallery, .videoSlider, .product-images, #product-images-container').first().waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
-        await page.waitForTimeout(2000); // Small buffer for stability
+        await page.waitForTimeout(1000); // Small buffer for stability
 
         // Dismiss promo / login modals if present on live pages
         await page.keyboard.press('Escape').catch(() => {});
@@ -216,14 +228,14 @@ test.describe('Product Video Playback Validation Suite', () => {
             document.body.style.overflow = 'auto';
           }
         }).catch(() => {});
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(500);
 
         // Check if there is a "+ More" thumbnail button in the gallery and click it to reveal hidden thumbnails
         const moreButton = page.locator('.image-gallery-thumbnail', { hasText: /\+\d+\s+More/i }).first();
         if (await moreButton.isVisible().catch(() => false)) {
           console.log('  -> Found "+ More" thumbnail button in gallery. Clicking to reveal all thumbnails...');
           await moreButton.click({ force: true }).catch(() => {});
-          await page.waitForTimeout(2000);
+          await page.waitForTimeout(1000);
         }
 
         // 3. Locate the first visible video element matching the selector(s)
@@ -284,7 +296,7 @@ test.describe('Product Video Playback Validation Suite', () => {
         }
 
         // Wait a short moment to see if video/iframe is already loaded directly (e.g. inline video)
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(500);
         const directVideo = page.locator('video, iframe');
         const hasDirectVideo = (await directVideo.count() > 0) && (await directVideo.first().isVisible().catch(() => false));
 
@@ -313,7 +325,7 @@ test.describe('Product Video Playback Validation Suite', () => {
                 await subElement.evaluate(el => el.click()).catch(() => {});
               });
               clickedSubTrigger = true;
-              await page.waitForTimeout(2000);
+              await page.waitForTimeout(1000);
               break;
             }
           }
@@ -333,7 +345,7 @@ test.describe('Product Video Playback Validation Suite', () => {
             await activeSlide.first().click({ force: true, timeout: 5000 }).catch(async () => {
               await activeSlide.first().evaluate(el => el.click()).catch(() => {});
             });
-            await page.waitForTimeout(1500);
+            await page.waitForTimeout(1000);
           }
         }
 
