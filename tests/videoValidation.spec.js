@@ -167,7 +167,7 @@ test.describe('Product Video Playback Validation Suite', () => {
         let responseStatus = 200;
         let navigationError = null;
         try {
-          const response = await page.goto(resolvedUrl, { waitUntil: 'load', timeout: 35000 });
+          const response = await page.goto(resolvedUrl, { waitUntil: 'domcontentloaded', timeout: 20000 });
           if (response) {
             responseStatus = response.status();
           }
@@ -190,8 +190,8 @@ test.describe('Product Video Playback Validation Suite', () => {
           throw new Error(`Product page failed to load correctly: ${errorMsg}`);
         }
 
-        // Wait for page to finish network activity (hydration & dynamic scripts)
-        await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+        // Wait for the gallery container to render and be visible (ensuring gallery is loaded/hydrated)
+        await page.locator('.image-gallery, .videoSlider, .product-images, #product-images-container').first().waitFor({ state: 'visible', timeout: 12000 }).catch(() => {});
         await page.waitForTimeout(2000); // Small buffer for stability
 
         // Dismiss promo / login modals if present on live pages
@@ -333,7 +333,7 @@ test.describe('Product Video Playback Validation Suite', () => {
             await activeSlide.first().click({ force: true, timeout: 5000 }).catch(async () => {
               await activeSlide.first().evaluate(el => el.click()).catch(() => {});
             });
-            await page.waitForTimeout(3000);
+            await page.waitForTimeout(1500);
           }
         }
 
@@ -341,9 +341,9 @@ test.describe('Product Video Playback Validation Suite', () => {
         console.log('  -> Waiting for player elements to attach/load...');
         try {
           await Promise.any([
-            page.waitForSelector('video', { state: 'attached', timeout: 10000 }),
-            page.waitForSelector('iframe[src*="youtube.com"], iframe[src*="youtu.be"]', { state: 'attached', timeout: 10000 }),
-            page.waitForSelector('.video-player, .modal-body, #movie_player', { state: 'visible', timeout: 10000 })
+            page.waitForSelector('video', { state: 'attached', timeout: 6000 }),
+            page.waitForSelector('iframe[src*="youtube.com"], iframe[src*="youtu.be"]', { state: 'attached', timeout: 6000 }),
+            page.waitForSelector('.video-player, .modal-body, #movie_player', { state: 'visible', timeout: 6000 })
           ]);
         } catch (err) {
           // Ignore wait error and let indicator checks handle the failure
@@ -367,17 +367,17 @@ test.describe('Product Video Playback Validation Suite', () => {
         console.log('  -> Video player/popup is opened.');
 
         // Allow some time for video streams/iframes to start initializing
-        await page.waitForTimeout(3000);
+        await page.waitForTimeout(1500);
 
         // 6. Identify Video Player Type (YouTube iframe vs HTML5 video)
         const iframeLocator = page.locator('iframe[src*="youtube.com"], iframe[src*="youtu.be"]').first();
         const html5VideoLocator = page.locator('video').first();
 
-        // Wait up to 5 seconds for either the YouTube iframe or HTML5 video tag to be visible/rendered
+        // Wait up to 3 seconds for either the YouTube iframe or HTML5 video tag to be visible/rendered
         try {
           await Promise.any([
-            iframeLocator.waitFor({ state: 'visible', timeout: 5000 }),
-            html5VideoLocator.waitFor({ state: 'visible', timeout: 5000 })
+            iframeLocator.waitFor({ state: 'visible', timeout: 3000 }),
+            html5VideoLocator.waitFor({ state: 'visible', timeout: 3000 })
           ]);
         } catch (waitErr) {
           // Ignore timeout and inspect current state directly
@@ -441,8 +441,8 @@ test.describe('Product Video Playback Validation Suite', () => {
                 el.addEventListener('loadedmetadata', () => {
                   resolve(el.duration);
                 }, { once: true });
-                // Timeout after 4 seconds
-                setTimeout(() => resolve(el.duration || 0), 4000);
+                // Timeout after 15 seconds to allow load under network congestion
+                setTimeout(() => resolve(el.duration || 0), 15000);
               }
             });
           }).catch(() => 0);
