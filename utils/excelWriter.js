@@ -150,6 +150,13 @@ async function writeExcel(results, outputPath) {
         pattern: 'solid',
         fgColor: { argb: 'FFD4EDDA' } // Light Green
       };
+    } else if (item.status === 'SKIPPED') {
+      statusCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FF595959' } };
+      statusCell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFEAEAEA' } // Light Gray
+      };
     } else {
       statusCell.font = { name: 'Segoe UI', size: 10, bold: true, color: { argb: 'FF721C24' } };
       statusCell.fill = {
