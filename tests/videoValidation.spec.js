@@ -115,10 +115,11 @@ test.describe('Product Video Playback Validation Suite', () => {
       const projectDir = path.resolve(__dirname, '..').replace(/\\/g, '/');
       let resolvedUrl = ProductURL.replace('${PROJECT_DIR}', projectDir);
 
-      // Beta domain redirect (Rewrites live woodenstreet.com urls to beta.teamwoodenstreet.com as requested)
-      const targetDomain = process.env.TARGET_DOMAIN || 'https://beta.teamwoodenstreet.com';
-      if (targetDomain && resolvedUrl.includes('woodenstreet.com')) {
-        resolvedUrl = resolvedUrl.replace(/https?:\/\/(www\.)?woodenstreet\.com/, targetDomain);
+      // Domain redirect (Rewrites URLs to the targeted domain, supporting both live and beta domains)
+      const targetDomain = process.env.TARGET_DOMAIN;
+      if (targetDomain) {
+        resolvedUrl = resolvedUrl.replace(/https?:\/\/([a-z0-9-]+\.)?woodenstreet\.com/, targetDomain);
+        resolvedUrl = resolvedUrl.replace(/https?:\/\/([a-z0-9-]+\.)?teamwoodenstreet\.com/, targetDomain);
       }
 
       const startTime = Date.now();
@@ -166,7 +167,7 @@ test.describe('Product Video Playback Validation Suite', () => {
         let responseStatus = 200;
         let navigationError = null;
         try {
-          const response = await page.goto(resolvedUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+          const response = await page.goto(resolvedUrl, { waitUntil: 'load', timeout: 35000 });
           if (response) {
             responseStatus = response.status();
           }
@@ -188,6 +189,10 @@ test.describe('Product Video Playback Validation Suite', () => {
           const errorMsg = navigationError ? navigationError.message : `HTTP Error Status: ${responseStatus}`;
           throw new Error(`Product page failed to load correctly: ${errorMsg}`);
         }
+
+        // Wait for page to finish network activity (hydration & dynamic scripts)
+        await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
+        await page.waitForTimeout(2000); // Small buffer for stability
 
         // Dismiss promo / login modals if present on live pages
         await page.keyboard.press('Escape').catch(() => {});
@@ -212,6 +217,14 @@ test.describe('Product Video Playback Validation Suite', () => {
           }
         }).catch(() => {});
         await page.waitForTimeout(1000);
+
+        // Check if there is a "+ More" thumbnail button in the gallery and click it to reveal hidden thumbnails
+        const moreButton = page.locator('.image-gallery-thumbnail', { hasText: /\+\d+\s+More/i }).first();
+        if (await moreButton.isVisible().catch(() => false)) {
+          console.log('  -> Found "+ More" thumbnail button in gallery. Clicking to reveal all thumbnails...');
+          await moreButton.click({ force: true }).catch(() => {});
+          await page.waitForTimeout(2000);
+        }
 
         // 3. Locate the first visible video element matching the selector(s)
         const selectors = VideoSelector.split(',').map(s => s.trim());
@@ -329,14 +342,14 @@ test.describe('Product Video Playback Validation Suite', () => {
         try {
           await Promise.any([
             page.waitForSelector('video', { state: 'attached', timeout: 10000 }),
-            page.waitForSelector('iframe', { state: 'attached', timeout: 10000 }),
+            page.waitForSelector('iframe[src*="youtube.com"], iframe[src*="youtu.be"]', { state: 'attached', timeout: 10000 }),
             page.waitForSelector('.video-player, .modal-body, #movie_player', { state: 'visible', timeout: 10000 })
           ]);
         } catch (err) {
           // Ignore wait error and let indicator checks handle the failure
         }
 
-        const playerIndicators = ['iframe', 'video', '.video-player', '.modal-body', '#movie_player', '.isvideo video', VideoSelector];
+        const playerIndicators = ['iframe[src*="youtube.com"]', 'iframe[src*="youtu.be"]', 'video', '.video-player', '.modal-body', '#movie_player', '.isvideo video'];
         let foundPlayer = false;
 
         for (const indicator of playerIndicators) {
@@ -357,8 +370,18 @@ test.describe('Product Video Playback Validation Suite', () => {
         await page.waitForTimeout(3000);
 
         // 6. Identify Video Player Type (YouTube iframe vs HTML5 video)
-        const iframeLocator = page.locator('iframe').first();
+        const iframeLocator = page.locator('iframe[src*="youtube.com"], iframe[src*="youtu.be"]').first();
         const html5VideoLocator = page.locator('video').first();
+
+        // Wait up to 5 seconds for either the YouTube iframe or HTML5 video tag to be visible/rendered
+        try {
+          await Promise.any([
+            iframeLocator.waitFor({ state: 'visible', timeout: 5000 }),
+            html5VideoLocator.waitFor({ state: 'visible', timeout: 5000 })
+          ]);
+        } catch (waitErr) {
+          // Ignore timeout and inspect current state directly
+        }
 
         let isYouTube = false;
         let isHTML5 = false;
@@ -436,7 +459,7 @@ test.describe('Product Video Playback Validation Suite', () => {
 
         // 8. Duplicacy validation (Scan all video elements to check for redundant uploads of the same video source)
         console.log('  -> Scanning page for duplicate video source uploads...');
-        const videoElements = page.locator('video, iframe');
+        const videoElements = page.locator('video, iframe[src*="youtube.com"], iframe[src*="youtu.be"]');
         const elementCount = await videoElements.count();
         const urls = [];
         
