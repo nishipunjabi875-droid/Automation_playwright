@@ -238,14 +238,34 @@ async function run() {
   console.log('===================================================');
 
   // Generate Reports
-  const excelReportPath = path.join(config.paths.reports, 'health-check-report.xlsx');
+  let excelReportPath = path.join(config.paths.reports, 'health-check-report.xlsx');
   const htmlReportPath = path.join(config.paths.reports, 'dashboard.html');
 
   console.log(`\nWriting Excel report to: ${excelReportPath}`);
-  await ExcelReporter.generate(consolidatedResults, healthInfo, excelReportPath);
+  try {
+    await ExcelReporter.generate(consolidatedResults, healthInfo, excelReportPath);
+  } catch (excelErr) {
+    if (excelErr.code === 'EBUSY') {
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+      excelReportPath = excelReportPath.replace('.xlsx', `_backup_${timestamp}.xlsx`);
+      console.warn(`\n[WARNING] Could not write to default report because it is open in Excel.`);
+      console.warn(`[WARNING] Saving report backup to: ${excelReportPath}\n`);
+      try {
+        await ExcelReporter.generate(consolidatedResults, healthInfo, excelReportPath);
+      } catch (backupErr) {
+        console.error(`[ERROR] Failed to save backup Excel report: ${backupErr.message}`);
+      }
+    } else {
+      console.error(`[ERROR] Failed to compile Excel report: ${excelErr.message}`);
+    }
+  }
 
   console.log(`Writing HTML Dashboard to: ${htmlReportPath}`);
-  await HTMLReporter.generate(consolidatedResults, healthInfo, htmlReportPath);
+  try {
+    await HTMLReporter.generate(consolidatedResults, healthInfo, htmlReportPath);
+  } catch (htmlErr) {
+    console.error(`[ERROR] Failed to compile HTML report: ${htmlErr.message}`);
+  }
 
   // Clear progress on successful run completion
   if (await fs.exists(progressFile)) {
