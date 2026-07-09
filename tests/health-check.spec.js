@@ -116,9 +116,9 @@ test.describe('Website Modular Health Audit Suite', () => {
       // Page loaded validation
       expect(navResult.status).toBe(200);
       
-      // Let content load completely
-      await page.waitForLoadState('networkidle').catch(() => {});
-      await page.waitForTimeout(3500);
+      // Let content load completely (use domcontentloaded to prevent hanging on analytics trackers)
+      await page.waitForLoadState('domcontentloaded').catch(() => {});
+      await page.waitForTimeout(2000);
       
       // Scroll to trigger lazy loading assets
       await basePage.scrollToBottomAndTop().catch(() => {});
@@ -244,8 +244,8 @@ test.describe('Website Modular Health Audit Suite', () => {
       await searchInput.press('Enter');
       
       // Settle results page load
-      await page.waitForLoadState('networkidle').catch(() => {});
-      await page.waitForTimeout(3000);
+      await page.waitForLoadState('domcontentloaded').catch(() => {});
+      await page.waitForTimeout(2000);
       
       const searchSpeed = Date.now() - startTime;
       
