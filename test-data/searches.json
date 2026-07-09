@@ -1,0 +1,17 @@
+[
+  {
+    "query": "sofa",
+    "expectSuggestions": true,
+    "expectResults": true
+  },
+  {
+    "query": "study table",
+    "expectSuggestions": true,
+    "expectResults": true
+  },
+  {
+    "query": "nonexistentproductxyz12345",
+    "expectSuggestions": false,
+    "expectResults": false
+  }
+]

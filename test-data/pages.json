@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Home",
+    "path": "/",
+    "type": "home"
+  },
+  {
+    "name": "Category (Sofa Sets)",
+    "path": "/sofa-sets",
+    "type": "category"
+  },
+  {
+    "name": "Collection (Udaipur)",
+    "path": "/udaipur-collection",
+    "type": "collection"
+  },
+  {
+    "name": "About Us",
+    "path": "/about-us",
+    "type": "about"
+  },
+  {
+    "name": "Contact Us",
+    "path": "/contact",
+    "type": "contact"
+  }
+]

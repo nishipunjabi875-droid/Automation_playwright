@@ -1,0 +1,20 @@
+[
+  {
+    "productId": "921",
+    "name": "Auric Large Bar Cabinet (Honey Finish)",
+    "path": "/product/auric-bar-cabinet-honey-finish",
+    "expectedVideo": "wsyt1"
+  },
+  {
+    "productId": "3205",
+    "name": "Silvio Rocking Chair (Honey Finish)",
+    "path": "/product/silvio-rocking-chair-honey-finish",
+    "expectedVideo": "wsyt1"
+  },
+  {
+    "productId": "7340",
+    "name": "Adolph Coffee Table (Walnut Finish)",
+    "path": "/product/adolph-coffee-table-walnut-finish",
+    "expectedVideo": "wsyt1"
+  }
+]

@@ -16,10 +16,13 @@
     "@playwright/test": "^1.58.2"
   },
   "dependencies": {
+    "axe-playwright": "^2.2.2",
     "axios": "^1.15.0",
     "csv-parser": "^3.2.0",
     "csv-writer": "^1.6.0",
+    "dotenv": "^17.4.2",
     "exceljs": "^4.4.0",
+    "fs-extra": "^11.3.6",
     "mysql2": "^3.21.1",
     "playwright": "^1.58.2",
     "playwright-core": "^1.58.2",
