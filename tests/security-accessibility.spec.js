@@ -4,7 +4,9 @@ const path = require('path');
 const config = require('../config/config');
 const BasePage = require('../pages/BasePage');
 
-const productsData = fs.readJsonSync(path.join(config.paths.testData, 'products.json'));
+const DataReader = require('../utils/dataReader');
+
+const productsData = DataReader.loadProductsSync(config.productSource);
 
 async function saveTempResults(testName, basePage, customData = {}) {
   const tempDir = path.join(config.paths.reports, 'health_temp');

@@ -12,6 +12,8 @@ const config = {
     user: process.env.LOGIN_USER || 'test_user@woodenstreet.com',
     pass: process.env.LOGIN_PASS || 'TestPassword123',
   },
+  productSource: process.env.PRODUCT_DATA_SOURCE || 'test-data/products.json',
+  pageSource: process.env.PAGE_DATA_SOURCE || 'test-data/pages.json',
   paths: {
     reports: path.resolve(__dirname, '../reports'),
     screenshots: path.resolve(__dirname, '../screenshots'),

@@ -9,10 +9,12 @@ const CartPage = require('../pages/CartPage');
 const CheckoutPage = require('../pages/CheckoutPage');
 const LinkCrawler = require('../helpers/crawler');
 
-// Load Test Data
-const pagesData = fs.readJsonSync(path.join(config.paths.testData, 'pages.json'));
-const productsData = fs.readJsonSync(path.join(config.paths.testData, 'products.json'));
-const searchesData = fs.readJsonSync(path.join(config.paths.testData, 'searches.json'));
+const DataReader = require('../utils/dataReader');
+
+// Load Test Data dynamically using DataReader (supports json, csv, xlsx)
+const pagesData = DataReader.loadPagesSync(config.pageSource);
+const productsData = DataReader.loadProductsSync(config.productSource);
+const searchesData = DataReader.readJsonSync(path.join(config.paths.testData, 'searches.json'));
 
 // Load Progress for Resuming
 let progress = { crawledUrls: [], testedProducts: [] };
