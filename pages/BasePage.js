@@ -103,6 +103,22 @@ class BasePage {
     };
   }
 
+  // Scroll page to trigger lazy loading assets
+  async scrollToBottomAndTop() {
+    try {
+      await this.page.evaluate(async () => {
+        window.scrollTo(0, document.body.scrollHeight / 2);
+        await new Promise(r => setTimeout(r, 600));
+        window.scrollTo(0, document.body.scrollHeight);
+        await new Promise(r => setTimeout(r, 1000));
+        window.scrollTo(0, 0);
+        await new Promise(r => setTimeout(r, 600));
+      });
+    } catch (e) {
+      // Ignore
+    }
+  }
+
   // Capture Screenshot on demand
   async captureScreenshot(name) {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');

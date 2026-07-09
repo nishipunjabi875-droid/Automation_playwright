@@ -115,6 +115,14 @@ test.describe('Website Modular Health Audit Suite', () => {
       
       // Page loaded validation
       expect(navResult.status).toBe(200);
+      
+      // Let content load completely
+      await page.waitForLoadState('networkidle').catch(() => {});
+      await page.waitForTimeout(3500);
+      
+      // Scroll to trigger lazy loading assets
+      await basePage.scrollToBottomAndTop().catch(() => {});
+      
       const isBlank = await page.evaluate(() => document.body.innerHTML.trim() === '');
       expect(isBlank).toBe(false);
 
@@ -217,11 +225,14 @@ test.describe('Website Modular Health Audit Suite', () => {
       await searchInput.click();
       await searchInput.fill(search.query);
       
+      // Allow key-press event handling and backend query response settle
+      await page.waitForTimeout(2000);
+      
       // Suggestions Check
       let suggestionsVisible = false;
       const sugDropdown = page.locator('.search-container ul li, .search-suggestions li, ul.search-results li, [role="option"]').first();
       try {
-        await sugDropdown.waitFor({ state: 'visible', timeout: 3500 });
+        await sugDropdown.waitFor({ state: 'visible', timeout: 4000 });
         suggestionsVisible = true;
       } catch (e) {
         // Ignore if terms don't trigger suggestions
@@ -231,12 +242,22 @@ test.describe('Website Modular Health Audit Suite', () => {
       
       // Submit Search
       await searchInput.press('Enter');
-      await page.waitForLoadState('load');
+      
+      // Settle results page load
+      await page.waitForLoadState('networkidle').catch(() => {});
+      await page.waitForTimeout(3000);
+      
       const searchSpeed = Date.now() - startTime;
       
-      // Validate Results Page
+      // Validate Results Page (resilient text check)
       const bodyText = await page.innerText('body');
-      const noResultsFound = bodyText.includes('No Results') || bodyText.includes('no products') || bodyText.includes('did not match any products') || bodyText.includes('No product found');
+      const noResultsFound = bodyText.includes('No Results') || 
+                            bodyText.includes('no products') || 
+                            bodyText.includes('did not match any products') || 
+                            bodyText.includes('No product found') ||
+                            bodyText.includes('Not Found') ||
+                            bodyText.includes('0 items found') ||
+                            bodyText.includes('Sorry, no results');
       
       if (search.expectResults) {
         expect(noResultsFound).toBe(false);
