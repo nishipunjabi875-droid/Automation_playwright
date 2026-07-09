@@ -78,8 +78,13 @@ class LinkCrawler {
         });
       }
 
+      const isInternal = this.isInternal(linkUrl);
       result.status = response.status;
       if (response.status >= 400) {
+        // Ignore external bot-blocking status codes (403, 400, 401)
+        if (!isInternal && (response.status === 403 || response.status === 400 || response.status === 401)) {
+          return;
+        }
         result.isBroken = true;
         result.error = `HTTP Error Status: ${response.status}`;
         this.brokenLinks.push(result);
