@@ -11,6 +11,39 @@ class Reporter {
    */
   static generateReport(results, baselineDate, compareDate, outputPath) {
     try {
+      // Save current run metadata
+      const reportsDir = path.dirname(outputPath);
+      const currentMetaPath = path.join(reportsDir, 'last_run_meta.json');
+      try {
+        if (!fs.existsSync(reportsDir)) {
+          fs.mkdirSync(reportsDir, { recursive: true });
+        }
+        fs.writeFileSync(currentMetaPath, JSON.stringify({ timestamp: compareDate }, null, 2), 'utf8');
+      } catch (err) {
+        console.error("Could not save current run metadata:", err);
+      }
+
+      // Check for previous run state data
+      let previousResults = null;
+      let previousDate = null;
+      const prevRunStatePath = path.join(reportsDir, 'previous_run_state.json');
+      const prevRunMetaPath = path.join(reportsDir, 'previous_run_meta.json');
+      if (fs.existsSync(prevRunStatePath)) {
+        try {
+          previousResults = JSON.parse(fs.readFileSync(prevRunStatePath, 'utf8'));
+        } catch (e) {
+          console.error("Could not read previous run state:", e);
+        }
+      }
+      if (fs.existsSync(prevRunMetaPath)) {
+        try {
+          const prevMeta = JSON.parse(fs.readFileSync(prevRunMetaPath, 'utf8'));
+          previousDate = prevMeta.timestamp;
+        } catch (e) {
+          console.error("Could not read previous run metadata:", e);
+        }
+      }
+
       // Calculate high-level summary stats
       let totalPages = 0;
       let totalComponents = 0;
@@ -32,7 +65,48 @@ class Reporter {
         ? (( (presentCount + (changedCount * 0.5)) / totalComponents ) * 100).toFixed(1)
         : '100';
 
+      // Calculate high-level summary stats (Previous Run)
+      let prevTotalPages = 0;
+      let prevTotalComponents = 0;
+      let prevPresentCount = 0;
+      let prevChangedCount = 0;
+      let prevMissingCount = 0;
+
+      if (previousResults) {
+        Object.values(previousResults).forEach(page => {
+          prevTotalPages++;
+          page.components.forEach(comp => {
+            prevTotalComponents++;
+            if (comp.status === 'Present') prevPresentCount++;
+            else if (comp.status === 'Changed') prevChangedCount++;
+            else if (comp.status === 'Missing') prevMissingCount++;
+          });
+        });
+      }
+
+      const prevComplianceRate = prevTotalComponents > 0 
+        ? (( (prevPresentCount + (prevChangedCount * 0.5)) / prevTotalComponents ) * 100).toFixed(1)
+        : null;
+
+      // Helper to generate trend text
+      const getTrendHtml = (currVal, prevVal, lowerIsBetter = false, isPercentage = false) => {
+        if (prevVal === null || prevVal === undefined) return '';
+        const diffVal = parseFloat((currVal - prevVal).toFixed(isPercentage ? 1 : 0));
+        if (diffVal === 0) {
+          return `<div class="trend-text stable">Stable (no change)</div>`;
+        }
+        
+        const sign = diffVal > 0 ? '+' : '';
+        const isGood = lowerIsBetter ? (diffVal < 0) : (diffVal > 0);
+        const badgeClass = isGood ? 'trend-good' : 'trend-bad';
+        const displayVal = `${sign}${diffVal}${isPercentage ? '%' : ''}`;
+        
+        return `<div class="trend-text ${badgeClass}">${displayVal} vs last run</div>`;
+      };
+
       const resultsJson = JSON.stringify(results);
+      const previousResultsJson = previousResults ? JSON.stringify(previousResults) : 'null';
+      const prevDateJson = previousDate ? JSON.stringify(previousDate) : 'null';
 
       const htmlContent = `<!DOCTYPE html>
 <html lang="en">
@@ -386,7 +460,7 @@ class Reporter {
     /* Highlights Pane - Side-by-Side Visual Comparison */
     .highlights-view {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 2rem;
       align-items: start;
     }
@@ -479,6 +553,22 @@ class Reporter {
     .badge-present { background: var(--green-glow); color: var(--neon-green); border: 1px solid rgba(16, 185, 129, 0.3); }
     .badge-changed { background: var(--orange-glow); color: var(--neon-orange); border: 1px solid rgba(245, 158, 11, 0.3); }
     .badge-missing { background: var(--red-glow); color: var(--neon-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-na { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid rgba(255, 255, 255, 0.1); }
+
+    .trend-text {
+      font-size: 0.75rem;
+      margin-top: 0.4rem;
+      font-weight: 600;
+    }
+    .trend-good {
+      color: var(--neon-green);
+    }
+    .trend-bad {
+      color: var(--neon-red);
+    }
+    .stable {
+      color: var(--text-muted);
+    }
 
     .diff-table {
       width: 100%;
@@ -487,26 +577,46 @@ class Reporter {
       margin-top: 0.5rem;
     }
 
-    .diff-row {
+    .diff-row-3col {
       display: grid;
-      grid-template-columns: 100px 1fr 1fr;
+      grid-template-columns: 120px 1fr 1fr;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .diff-row-4col {
+      display: grid;
+      grid-template-columns: 120px 1fr 1fr 1fr;
       border-bottom: 1px solid var(--border-color);
     }
 
-    .diff-row:last-child {
-      border-bottom: none;
-    }
-
     .diff-cell {
-      padding: 6px 12px;
+      padding: 8px 12px;
       font-size: 0.75rem;
       word-break: break-all;
+      display: flex;
+      align-items: center;
     }
 
     .diff-hdr {
-      background: rgba(0,0,0,0.1);
-      font-weight: 600;
+      background: rgba(0,0,0,0.15);
+      font-weight: 700;
       color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.5px;
+    }
+
+    .diff-changed-cell {
+      background: rgba(245, 158, 11, 0.08) !important;
+      color: var(--neon-orange) !important;
+    }
+    .diff-new-cell {
+      background: rgba(16, 185, 129, 0.08) !important;
+      color: #a7f3d0 !important;
+    }
+    .diff-old-cell {
+      background: rgba(239, 68, 68, 0.05) !important;
+      color: #fca5a5 !important;
     }
 
     .diff-old {
@@ -552,6 +662,12 @@ class Reporter {
         <div class="meta-value">${baselineDate || 'N/A'}</div>
         <div class="meta-label">Baseline Date</div>
       </div>
+      ${previousDate ? `
+      <div class="meta-item">
+        <div class="meta-value">${previousDate}</div>
+        <div class="meta-label">Previous Run Date</div>
+      </div>
+      ` : ''}
       <div class="meta-item">
         <div class="meta-value">${compareDate || 'N/A'}</div>
         <div class="meta-label">Comparison Date</div>
@@ -568,18 +684,22 @@ class Reporter {
       <div class="stat-card stat-compliance">
         <div class="stat-label">Compliance Index</div>
         <div class="stat-value" style="color: var(--neon-purple)">${complianceRate}%</div>
+        ${getTrendHtml(parseFloat(complianceRate), prevComplianceRate ? parseFloat(prevComplianceRate) : null, false, true)}
       </div>
       <div class="stat-card stat-present">
         <div class="stat-label">Components Present</div>
         <div class="stat-value" style="color: var(--neon-green)">${presentCount}</div>
+        ${getTrendHtml(presentCount, previousResults ? prevPresentCount : null, false, false)}
       </div>
       <div class="stat-card stat-changed">
         <div class="stat-label">Changed / Updated</div>
         <div class="stat-value" style="color: var(--neon-orange)">${changedCount}</div>
+        ${getTrendHtml(changedCount, previousResults ? prevChangedCount : null, true, false)}
       </div>
       <div class="stat-card stat-missing">
         <div class="stat-label">Missing Elements</div>
         <div class="stat-value" style="color: var(--neon-red)">${missingCount}</div>
+        ${getTrendHtml(missingCount, previousResults ? prevMissingCount : null, true, false)}
       </div>
     </div>
 
@@ -620,6 +740,12 @@ class Reporter {
               <img id="baselineScreenshot" class="screenshot-img" src="" alt="Reference Baseline" onerror="this.src='https://placehold.co/600x400?text=No+Baseline+Image'">
             </div>
           </div>
+          <div class="visual-column" id="previousColumn" style="display: none;">
+            <div style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; color: var(--neon-orange); margin-bottom: 8px; letter-spacing: 0.5px;">Previous Run View</div>
+            <div class="screenshot-container">
+              <img id="previousScreenshot" class="screenshot-img" src="" alt="Previous Run" onerror="this.src='https://placehold.co/600x400?text=No+Previous+Image'">
+            </div>
+          </div>
           <div class="visual-column">
             <div style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; color: var(--neon-blue); margin-bottom: 8px; letter-spacing: 0.5px;">Current Build View (Today's Capture)</div>
             <div class="screenshot-container">
@@ -633,9 +759,10 @@ class Reporter {
           <table>
             <thead>
               <tr>
-                <th style="width: 25%">Component Name</th>
-                <th style="width: 15%">Status</th>
-                <th style="width: 20%">Selector</th>
+                <th style="width: 20%">Component Name</th>
+                <th style="width: 12%">Prev Status</th>
+                <th style="width: 12%">New Status</th>
+                <th style="width: 16%">Selector</th>
                 <th style="width: 40%">Details & Differences</th>
               </tr>
             </thead>
@@ -657,6 +784,7 @@ class Reporter {
 
   <script>
     const data = ${resultsJson};
+    const previousData = ${previousResultsJson};
     let activePageId = Object.keys(data)[0];
     let viewMode = 'highlights'; // 'highlights' | 'table'
     let statusFilter = 'ALL';
@@ -716,9 +844,20 @@ class Reporter {
       document.getElementById('activePageUrl').innerHTML = \`<a href="\${page.url}" target="_blank" style="color: var(--neon-blue); text-decoration: none;">\${page.url}</a>\`;
       
       // Load screenshots
-      // Screenshots are in ./screenshots/ relative to dashboard.html
       document.getElementById('pageScreenshot').src = './screenshots/' + pageId + '_current.png';
       document.getElementById('baselineScreenshot').src = './screenshots/' + pageId + '_baseline.png';
+
+      // Load previous screenshot if available
+      const previousColumn = document.getElementById('previousColumn');
+      const highlightsView = document.getElementById('highlightsView');
+      if (previousData && previousData[pageId]) {
+        previousColumn.style.display = 'block';
+        document.getElementById('previousScreenshot').src = './screenshots/' + pageId + '_previous.png';
+        highlightsView.style.gridTemplateColumns = '1fr 1fr 1fr';
+      } else {
+        previousColumn.style.display = 'none';
+        highlightsView.style.gridTemplateColumns = '1fr 1fr';
+      }
 
       renderTable();
       setViewMode(viewMode);
@@ -735,7 +874,7 @@ class Reporter {
       if (mode === 'highlights') {
         highlightsBtn.classList.add('active');
         tableBtn.classList.remove('active');
-        highlightsView.style.display = 'flex';
+        highlightsView.style.display = 'grid';
         tableView.style.display = 'none';
         filtersRow.style.display = 'none';
       } else {
@@ -760,8 +899,52 @@ class Reporter {
       renderTable();
     }
 
+    function getAttributeRowData(comp, prevComp) {
+      const allAttrs = new Set([
+        ...Object.keys(comp.attributes || {}),
+        ...Object.keys(comp.changes || {}),
+        ...(prevComp ? Object.keys(prevComp.attributes || {}) : []),
+        ...(prevComp ? Object.keys(prevComp.changes || {}) : [])
+      ]);
+
+      const rows = [];
+      allAttrs.forEach(attr => {
+        let currentVal = comp.present ? (comp.attributes[attr] || '') : '(Element Missing)';
+        let prevVal = prevComp ? (prevComp.present ? (prevComp.attributes[attr] || '') : '(Element Missing)') : 'N/A';
+        
+        let baselineVal = '';
+        if (comp.changes && comp.changes[attr]) {
+          baselineVal = comp.changes[attr].old;
+        } else if (prevComp && prevComp.changes && prevComp.changes[attr]) {
+          baselineVal = prevComp.changes[attr].old;
+        } else if (comp.present) {
+          baselineVal = comp.attributes[attr] || '';
+        } else if (prevComp && prevComp.present) {
+          baselineVal = prevComp.attributes[attr] || '';
+        } else {
+          baselineVal = '';
+        }
+
+        // Check if changed
+        const isChangedNew = comp.changes && comp.changes[attr];
+        const isChangedPrev = prevComp && prevComp.changes && prevComp.changes[attr];
+        
+        rows.push({
+          attr,
+          baselineVal,
+          prevVal,
+          currentVal,
+          isChangedPrev,
+          isChangedNew
+        });
+      });
+      
+      return rows;
+    }
+
     function renderTable() {
       const page = data[activePageId];
+      const prevPage = previousData ? previousData[activePageId] : null;
       const search = document.getElementById('searchInput').value.toLowerCase();
       const tbody = document.getElementById('tableBody');
       const emptyState = document.getElementById('emptyState');
@@ -782,38 +965,64 @@ class Reporter {
       filtered.forEach(c => {
         const tr = document.createElement('tr');
         
+        // Find previous component for comparative analysis
+        const prevComp = prevPage ? prevPage.components.find(pc => pc.id === c.id) : null;
+        const prevStatus = prevComp ? prevComp.status : 'N/A';
+
+        // Badge styling for New Run
         let badgeClass = 'badge-present';
         if (c.status === 'Changed') badgeClass = 'badge-changed';
         else if (c.status === 'Missing') badgeClass = 'badge-missing';
 
+        // Badge styling for Previous Run
+        let prevBadgeClass = 'badge-present';
+        if (prevStatus === 'Changed') prevBadgeClass = 'badge-changed';
+        else if (prevStatus === 'Missing') prevBadgeClass = 'badge-missing';
+        else if (prevStatus === 'N/A') prevBadgeClass = 'badge-na';
+
         let detailsContent = '';
-        if (c.status === 'Present') {
-          detailsContent = '<div style="color: var(--neon-green)">All attributes match baseline reference.</div>';
-        } else if (c.status === 'Missing') {
-          detailsContent = \`<div style="color: var(--neon-red)">\${c.optional ? 'Optional component missing' : 'Critical element missing from page DOM'}.</div>\`;
-        } else if (c.status === 'Changed' && c.changes) {
-          detailsContent = \`
-            <div style="font-weight: 600; margin-bottom: 4px; color: var(--neon-orange);">Detected Changes:</div>
-            <div class="diff-table">
-              <div class="diff-row">
-                <div class="diff-cell diff-hdr">Attribute</div>
-                <div class="diff-cell diff-hdr">Baseline Value</div>
-                <div class="diff-cell diff-hdr">Current Value</div>
-              </div>
-          \`;
+        if (c.status === 'Present' && prevStatus === 'Present') {
+          detailsContent = '<div style="color: var(--neon-green)">All attributes match baseline reference across both runs.</div>';
+        } else if (c.status === 'Missing' && prevStatus === 'Missing') {
+          detailsContent = \`<div style="color: var(--neon-red)">\${c.optional ? 'Optional component missing' : 'Critical element missing from page DOM'} in both runs.</div>\`;
+        } else {
+          // Generate a 3-way or 2-way attribute diff table
+          const attrRows = getAttributeRowData(c, prevComp);
+          const hasChangedAttrs = attrRows.some(r => r.isChangedPrev || r.isChangedNew);
           
-          Object.keys(c.changes).forEach(attr => {
-            const chg = c.changes[attr];
-            detailsContent += \`
-              <div class="diff-row">
-                <div class="diff-cell" style="font-weight: 500;">\${attr}</div>
-                <div class="diff-cell diff-old">\${escapeHtml(chg.old)}</div>
-                <div class="diff-cell diff-new">\${escapeHtml(chg.new)}</div>
-              </div>
+          if (!hasChangedAttrs) {
+            detailsContent = \`<div style="color: var(--neon-green)">All attributes match baseline reference. (Current: \${c.status}, Previous: \${prevStatus})</div>\`;
+          } else {
+            const hasPrev = !!prevComp;
+            detailsContent = \`
+              <div style="font-weight: 600; margin-bottom: 4px; color: var(--neon-orange);">Comparison History:</div>
+              <div class="diff-table">
+                <div class="\${hasPrev ? 'diff-row-4col' : 'diff-row-3col'}">
+                  <div class="diff-cell diff-hdr">Attribute</div>
+                  <div class="diff-cell diff-hdr">Baseline</div>
+                  \${hasPrev ? '<div class="diff-cell diff-hdr">Previous Run</div>' : ''}
+                  <div class="diff-cell diff-hdr">New Run</div>
+                </div>
             \`;
-          });
-          
-          detailsContent += '</div>';
+            
+            attrRows.forEach(r => {
+              // Only render rows where changes occurred to avoid clutter
+              if (r.isChangedPrev || r.isChangedNew) {
+                const prevCellClass = r.isChangedPrev ? 'diff-changed-cell' : '';
+                const newCellClass = r.isChangedNew ? 'diff-new-cell' : '';
+                detailsContent += \`
+                  <div class="\${hasPrev ? 'diff-row-4col' : 'diff-row-3col'}">
+                    <div class="diff-cell" style="font-weight: 600;">\${escapeHtml(r.attr)}</div>
+                    <div class="diff-cell diff-old-cell">\${escapeHtml(r.baselineVal)}</div>
+                    \${hasPrev ? '<div class="diff-cell ' + prevCellClass + '">' + escapeHtml(r.prevVal) + '</div>' : ''}
+                    <div class="diff-cell \${newCellClass}">\${escapeHtml(r.currentVal)}</div>
+                  </div>
+                \`;
+              }
+            });
+            
+            detailsContent += '</div>';
+          }
         }
 
         tr.innerHTML = \`
@@ -821,6 +1030,7 @@ class Reporter {
             <div class="comp-name">\${c.name}</div>
             \${c.optional ? '<span style="font-size: 10px; color: var(--text-muted);">Optional</span>' : ''}
           </td>
+          <td><span class="status-badge \${prevBadgeClass}">\${prevStatus}</span></td>
           <td><span class="status-badge \${badgeClass}">\${c.status}</span></td>
           <td><span class="comp-selector">\${escapeHtml(c.selector)}</span></td>
           <td>\${detailsContent}</td>
@@ -845,7 +1055,6 @@ class Reporter {
 </html>`;
 
       // Ensure folders exist
-      const reportsDir = path.dirname(outputPath);
       if (!fs.existsSync(reportsDir)) {
         fs.mkdirSync(reportsDir, { recursive: true });
       }
