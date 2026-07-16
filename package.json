@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "ui-audit:capture": "node src/automation/run.js --mode=capture",
-    "ui-audit:compare": "node src/automation/run.js --mode=compare"
+    "ui-audit:compare": "node src/automation/run.js --mode=compare",
+    "dev:faq": "node faq-clone/server.js"
   },
   "keywords": [],
   "author": "",
