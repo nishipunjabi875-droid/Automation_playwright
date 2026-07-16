@@ -8,110 +8,154 @@
 // 1. FAQ Structural Dataset
 // ==========================================
 const FAQ_DATABASE = [
-    {
-        id: "orders",
-        title: "Order & Tracking",
-        ariaLabel: "Order and tracking category",
-        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`,
-        questions: [
-            {
-                q: "How can I check my order status?",
-                a: "<p>You can track your order status in real time by clicking on the <strong>'Track My Order'</strong> quick card at the top of this page and entering your Order ID.</p><p>Alternatively, you can log into your Wooden Street Account, head to the 'My Orders' section, and check the current transit milestone. You will also receive automatic SMS updates at every stage of dispatch.</p>"
-            },
-            {
-                q: "Can I change my delivery address after placing an order?",
-                a: "<p>Yes, address changes are permitted if the order has not yet been dispatched from our central warehouse.</p><p>To update your delivery address, please contact our support team immediately via chat or raise a service ticket with the new address details. Once dispatched, routing changes are not possible.</p>"
-            },
-            {
-                q: "How do I cancel my order?",
-                a: "<p>You can request cancellation within 24 hours of placing the order for a full refund. Cancellations after 24 hours are subject to a processing charge of 10% since production on solid wood furniture starts immediately.</p><p>Please raise a support ticket or ping our chatbot assistant with your Order ID to initiate cancellation.</p>"
-            },
-            {
-                q: "Why has my delivery been delayed?",
-                a: "<p>Solid wood furniture crafting goes through rigorous seasoning, manufacturing, and polishing stages. Sometimes a batch check might require extra polishing or quality audit, resulting in a short delay.</p><p>Other reasons include weather anomalies, logistics congestion, or octroi checks. We promise to communicate any changes to your delivery window proactively via email and SMS.</p>"
-            }
-        ]
-    },
-    {
-        id: "payments",
-        title: "Payments & Refunds",
-        ariaLabel: "Payments and refunds category",
-        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>`,
-        questions: [
-            {
-                q: "What payment options do you support?",
-                a: "<p>Wooden Street supports a wide variety of secure payment channels:</p><ul><li>All major Credit & Debit cards (Visa, Mastercard, RuPay, Amex)</li><li>Net Banking across all major banks</li><li>UPI Payments (Google Pay, PhonePe, Paytm, BHIM)</li><li>No-Cost EMI plans on selected credit cards and finance partners</li><li>Cash on Delivery (COD) for orders up to ₹15,000</li></ul>"
-            },
-            {
-                q: "How long does a refund take to process?",
-                a: "<p>Once our quality team confirms the return or cancellation, the refund is initiated within 48 business hours.</p><p>The amount will reflect back in your bank account or card balance within <strong>5 to 7 business days</strong>, depending on your card issuer or banking institution's standard transaction clearance cycles.</p>"
-            },
-            {
-                q: "Is No-Cost EMI available?",
-                a: "<p>Yes! We offer 3-month and 6-month No-Cost EMI options on credit cards from HDFC, ICICI, SBI, Axis Bank, and Kotak Mahindra. The interest charged by the bank is given as an upfront discount on your checkout total, making it interest-free for you.</p>"
-            }
-        ]
-    },
-    {
-        id: "shipping",
-        title: "Shipping & Assembly",
-        ariaLabel: "Shipping and assembly category",
-        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>`,
-        questions: [
-            {
-                q: "Do you charge for shipping or delivery?",
-                a: "<p>Shipping and delivery are <strong>absolutely free</strong> for all orders above ₹5,000 across major pin codes in India. For orders below ₹5,000, a nominal shipping charge of ₹299 is applicable at checkout.</p>"
-            },
-            {
-                q: "Who will assemble my furniture?",
-                a: "<p>Wooden Street provides <strong>free expert assembly services</strong> for all products that require installation (e.g., beds, wardrobes, study tables). Our professional technicians will visit your home within 24 to 48 hours of product delivery to complete the setup safely.</p>"
-            },
-            {
-                q: "Can I schedule my delivery for a specific date?",
-                a: "<p>Yes! Once your item reaches our local delivery hub, our logistics partner will call you to coordinate a delivery slot. You can request them to hold the shipment or schedule it for a specific date that suits you (up to 7 days of storage is free of charge).</p>"
-            }
-        ]
-    },
-    {
-        id: "returns",
-        title: "Returns & Warranty",
-        ariaLabel: "Returns and warranty category",
-        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>`,
-        questions: [
-            {
-                q: "What is your return policy?",
-                a: "<p>We follow a <strong>7-day Replacement or Repair Policy</strong> in case the product arrives with manufacturing defects, structural damage, or incorrect dimensions.</p><p>Please raise a support ticket or contact customer care within 7 days of receipt, uploading clear images and video of the issue. We will schedule a technician inspection or arrange a replacement accordingly.</p>"
-            },
-            {
-                q: "Is there a warranty on the furniture?",
-                a: "<p>Yes, all Wooden Street solid wood furniture comes with a comprehensive <strong>1-Year Warranty</strong> covering manufacturing defects, wood splitting, termite issues, and structural integrity.</p><p>Warranty does not cover wear and tear, cuts or scratches caused by accidents, or damage due to exposure to direct sunlight or moisture.</p>"
-            },
-            {
-                q: "What happens if a product is damaged during transit?",
-                a: "<p>If you notice physical damage on the packaging box or the product during unboxing, please note it on the Proof of Delivery (POD) receipt and capture photos immediately.</p><p>Report the issue to us within 48 hours, and we will initiate a priority return and shipment of a fresh unit at no additional charge.</p>"
-            }
-        ]
-    },
-    {
-        id: "customization",
-        title: "Customization & Wood",
-        ariaLabel: "Customization and wood details category",
-        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>`,
-        questions: [
-            {
-                q: "Can I customize the size or finish of a bed or sofa?",
-                a: "<p>Absolutely! We are known as India's premier custom furniture brand. You can customize the wood finish (Honey, Walnut, Stone), fabric color/material (Velvet, Cotton, Linen), and size dimensions.</p><p>Look for the 'Customize This Product' button on the product detail page, or speak directly to a sales consultant using our Chatbot widget or local store.</p>"
-            },
-            {
-                q: "What kind of wood do you use?",
-                a: "<p>We source only premium quality <strong>Solid Wood</strong> including seasoned <strong>Sheesham Wood (Indian Rosewood)</strong> and high-grade <strong>Mango Wood</strong>. All our wood is chemically seasoned in kiln chambers and vacuum-treated for lifetime protection against termites, moisture, and warping.</p>"
-            },
-            {
-                q: "Where can I see the wood finishes in person?",
-                a: "<p>You can visit any of our 90+ Wooden Street Experience Stores across India to touch, feel, and see our wood finishes, fabrics, and structural quality. Use our Store Locator above to find the nearest experience studio.</p>"
-            }
-        ]
-    }
+  {
+    id: "orders",
+    title: "Order Tracking & Delivery",
+    ariaLabel: "Order tracking and delivery assistance",
+    icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`,
+    questions: [
+      {
+        q: "How to Track my Order?",
+        a: "<p>Go to My Orders (<a href='https://www.woodenstreet.com/order-history' target='_blank'>Track Order</a>) in your WoodenStreet account to track your order.</p>"
+      },
+      {
+        q: "My item has already reached the distribution center, what happens next?",
+        a: "<p>Once your order has reached the DC, you will receive a call prior from our delivery team to schedule your delivery.</p>"
+      },
+      {
+        q: "What should I do if I am relocating or out of town?",
+        a: "<p>Congratulations on your relocation! We can help you with that. You can raise a ticket (<a href='https://www.woodenstreet.com/tickets' target='_blank'>Raise Ticket</a>) for the same and our team will coordinate.</p>"
+      },
+      {
+        q: "What should I do if I missed the delivery of my order today?",
+        a: "<p>In case you missed the delivery, the logistics partner will try to deliver the product on the next business day. You will receive a call prior from our delivery team to schedule it.</p>"
+      },
+      {
+        q: "What should I do if the delivery of my order is delayed?",
+        a: "<p>We try our best to deliver your order on time. In rare cases where a delay occurs, our support team will keep you updated through emails or tickets. A new delivery timeframe will be shared, and you can track status under My Orders.</p>"
+      },
+      {
+        q: "What is the estimated delivery time?",
+        a: "<p>The delivery time differs from product to product based on in-stock availability or made-to-order status and your location. Please check the product details tab on individual product pages for estimated delivery timelines.</p>"
+      },
+      {
+        q: "How do I check the current status of my product?",
+        a: "<p>To check the current status of your product, log into your WoodenStreet Account and go to My Orders to see the milestones.</p>"
+      },
+      {
+        q: "How can I change my delivery address?",
+        a: "<p>Kindly raise a support ticket for that order within 24 hours of placing the order. Our support desk will update the shipping details before dispatch.</p>"
+      },
+      {
+        q: "I am unable to check my order status or tracking, what should I do?",
+        a: "<p>If you are not able to check order status or tracking details, kindly raise a support ticket or contact our customer support line directly.</p>"
+      },
+      {
+        q: "Why does the promised Delivery date vary from one item to another?",
+        a: "<p>Key reasons are: non-availability of items in stock and products sourced from different sellers. In these cases, separate vendors dispatch items independently as per their manufacturing warehouse locations.</p>"
+      },
+      {
+        q: "What are the reasons behind late delivery or missed expected delivery date?",
+        a: "<p>Unlike other marketplaces, Woodenstreet does in-house manufacturing with a stringent quality check process. Production checks, seasoning delays, or transit clearances can occasionally cause delivery adjustments.</p>"
+      },
+      {
+        q: "Can woodenstreet give me free home delivery for my order?",
+        a: "<p>Yes, WoodenStreet provides free home delivery across major cities in India. However, in selective high-logistics zones, a nominal delivery and installation charge may be computed at checkout.</p>"
+      },
+      {
+        q: "Will my product deliver in apartments?",
+        a: "<p>Yes. However, in the absence of a service lift, our delivery partner shall only make a delivery to the ground floor. Extra doorstep carry charges may apply on request if delivery to upper floors is required without a lift.</p>"
+      },
+      {
+        q: "Can I take my delivery later than the date specified?",
+        a: "<p>Before dispatch from local distribution centers, our delivery executive calls you to schedule slots. You can request them to reschedule or hold the shipment for up to 7 days free of charge.</p>"
+      },
+      {
+        q: "Can I get all my products in one single delivery?",
+        a: "<p>If all items are of WoodenStreet brand and sourced from the same warehouse, they are consolidated. Items from separate vendors or different manufacturing hubs will be delivered on different dates.</p>"
+      },
+      {
+        q: "Can my security guard or neighbor receive my shipment if I am not available?",
+        a: "<p>Yes, they can. They will need to show a valid photo ID or connect with the delivery agent through a telephone verification call.</p>"
+      },
+      {
+        q: "How can I get the contact number of my delivery agent?",
+        a: "<p>As per company policy, direct contact numbers of field delivery representatives are not shared. Rest assured they will call you prior to arrival or in case of routing queries.</p>"
+      }
+    ]
+  },
+  {
+    id: "payments",
+    title: "Payment & Invoice",
+    ariaLabel: "Payment methods and invoice instructions",
+    icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>`,
+    questions: [
+      {
+        q: "What payment options do you support?",
+        a: "<p>We support Credit/Debit Cards, Net Banking, UPI (Google Pay, PhonePe, Paytm), No-Cost EMIs, and Cash on Delivery (COD) for selected orders.</p>"
+      },
+      {
+        q: "Is No-Cost EMI available?",
+        a: "<p>Yes, we offer No-Cost EMI plans for 3-month and 6-month tenures on credit cards from partner banks. The interest charge is deducted as an upfront discount at checkout.</p>"
+      },
+      {
+        q: "How can I download my GST invoice?",
+        a: "<p>Log in to your account, visit My Orders, select the completed order, and click 'Download Invoice'. The GST registration detail will be listed.</p>"
+      },
+      {
+        q: "Can I change the billing or shipping name in the invoice?",
+        a: "<p>Invoice detail updates are permitted only before the product is dispatched. Please raise a support ticket immediately for corrections.</p>"
+      }
+    ]
+  },
+  {
+    id: "account",
+    title: "Manage Account",
+    ariaLabel: "Account settings and profile help",
+    icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`,
+    questions: [
+      {
+        q: "How do I create a Wooden Street account?",
+        a: "<p>Click 'Sign In' in the header and register manually with your email/phone number, or use Google or Facebook quick login options.</p>"
+      },
+      {
+        q: "How can I update my profile mobile number or email?",
+        a: "<p>Go to Profile Settings in your dashboard, or raise a support ticket for assistance if authentication fails.</p>"
+      }
+    ]
+  },
+  {
+    id: "warranty",
+    title: "Warranty Information",
+    ariaLabel: "Product warranty specifications",
+    icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
+    questions: [
+      {
+        q: "What is the warranty period on solid wood furniture?",
+        a: "<p>All Wooden Street manufactured solid wood products carry a comprehensive 1-Year Warranty covering termite issues, wood splitting, and manufacturing defects.</p>"
+      },
+      {
+        q: "How do I claim product warranty?",
+        a: "<p>Please raise a support ticket under the Warranty Category, uploading clear images and invoice copies of the damaged segment. Our technical inspectors will review it within 48 hours.</p>"
+      }
+    ]
+  },
+  {
+    id: "damage",
+    title: "Damaged Or Defective Item",
+    ariaLabel: "Report damage or returns",
+    icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+    questions: [
+      {
+        q: "What should I do if my furniture arrives damaged?",
+        a: "<p>Note the physical damage details on the Proof of Delivery receipt and capture pictures of the unit. Raise a support ticket within 48 hours, and we will initiate a repair or replacement.</p>"
+      },
+      {
+        q: "What is your return window for defective furniture?",
+        a: "<p>Defective or damaged items can be reported for return or replacement within 7 days of delivery.</p>"
+      }
+    ]
+  }
 ];
 
 // ==========================================

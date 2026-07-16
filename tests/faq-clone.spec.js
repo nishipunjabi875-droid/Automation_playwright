@@ -28,13 +28,13 @@ test.describe('WoodenStreet Help Center FAQ Clone UI Tests', () => {
     await expect(categoriesList).toHaveCount(5);
 
     // 2. Select Payments & Refunds category
-    const paymentCategory = page.locator('.category-item:has-text("Payments & Refunds")');
+    const paymentCategory = page.locator('.category-item:has-text("Payment & Invoice")');
     await paymentCategory.click();
     await expect(paymentCategory).toHaveClass(/active/);
 
     // 3. Confirm questions list updates
     const activeTitle = page.locator('#active-category-title');
-    await expect(activeTitle).toHaveText('Payments & Refunds');
+    await expect(activeTitle).toHaveText('Payment & Invoice');
 
     // 4. Click a question to open the answer in pane 3
     const questionItem = page.locator('.question-item').first();
