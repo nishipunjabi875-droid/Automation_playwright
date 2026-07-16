@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive FAQ Prototype | Wooden Street Support</title>
+    <!-- Premium Google Fonts matching Wooden Street typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 1. Top Utility Header Bar -->
+    <div class="top-header-bar">
+        <div class="header-container-wide">
+            <div class="top-bar-left">
+                <a href="index.html" style="font-weight: 700; color: var(--primary-color);">&larr; Back to Presentation Dashboard</a>
+                <a href="#">Furniture</a>
+                <a href="#">Home Interiors</a>
+            </div>
+            <div class="top-bar-right">
+                <a href="#">📞 +91-9314444747</a>
+                <a href="#">Franchise</a>
+                <a href="#">Track Order</a>
+                <a href="#" class="active">Help Center</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Main Logo & Search Bar Tier -->
+    <header class="main-branding-header">
+        <div class="header-container-wide">
+            <!-- Brand Logo -->
+            <a href="index.html" class="ws-logo">
+                <span class="logo-txt-orange">wooden</span><span class="logo-txt-black">street</span>
+                <span style="font-size: 11px; background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle;">PROTOTYPE</span>
+            </a>
+
+            <!-- Central Product Search -->
+            <div class="ws-product-search-box">
+                <input type="text" placeholder="Search Products, Color & More..." disabled>
+                <button class="ws-search-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+            </div>
+
+            <!-- Right Utilities Icons -->
+            <div class="ws-header-utilities">
+                <a href="#" class="utility-icon" title="Stores">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <span>Stores</span>
+                </a>
+                <a href="#" class="utility-icon" title="Profile">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="utility-icon" title="Wishlist">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    <span>Wishlist</span>
+                </a>
+                <a href="#" class="utility-icon cart-icon" title="Cart">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    <span class="cart-badge">0</span>
+                    <span>Cart</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. Category Horizontal Menu Bar -->
+    <nav class="ws-category-navbar">
+        <div class="header-container-wide">
+            <ul class="category-menu-links">
+                <li><a href="#">Sofas</a></li>
+                <li><a href="#">Living</a></li>
+                <li><a href="#">Bedroom</a></li>
+                <li><a href="#">Dining</a></li>
+                <li><a href="#">Storage</a></li>
+                <li><a href="#">Study</a></li>
+                <li><a href="#">Mattresses</a></li>
+                <li><a href="#">Decor</a></li>
+                <li><a href="#">Outdoor</a></li>
+                <li><a href="#" class="sale-link">Monsoon Sale</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- FAQ Hero Section -->
+    <section class="faq-hero-new">
+        <div class="faq-hero-container">
+            <h1 class="faq-hero-title">Help Center</h1>
+            <p class="faq-hero-subtitle">Find answers to queries, check order status, or raise complaints</p>
+            
+            <div class="faq-search-card">
+                <div class="faq-search-input-wrapper">
+                    <input type="text" id="faq-search-input" placeholder="Please Search Your Query" autocomplete="off">
+                    <button class="search-clear-btn" id="search-clear-btn" style="display: none;">&times;</button>
+                </div>
+                <button class="faq-search-btn-action" id="faq-search-submit">Search</button>
+            </div>
+
+            <!-- Complaint Ticket Banner Card -->
+            <div class="ticket-complaint-banner">
+                <div class="ticket-banner-content">
+                    <svg class="ticket-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <span>Want to raise a complaint or give a feedback?</span>
+                </div>
+                <button class="ws-orange-ticket-btn" id="btn-raise-ticket-banner">Ticket</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Action Cards Section -->
+    <section class="quick-actions-section">
+        <div class="section-container">
+            <div class="quick-actions-grid">
+                <div class="action-card" id="action-track-order">
+                    <div class="card-icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect>
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                        </svg>
+                    </div>
+                    <h3>Track My Order</h3>
+                    <p>Check the live location and transit status of your furniture package.</p>
+                    <span class="card-link">Track Now &rarr;</span>
+                </div>
+                <div class="action-card" id="action-raise-ticket">
+                    <div class="card-icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Raise Support Ticket</h3>
+                    <p>Submit a formal service ticket for any product issue, claim, or feedback.</p>
+                    <span class="card-link">Raise Ticket &rarr;</span>
+                </div>
+                <div class="action-card" id="action-store-locator">
+                    <div class="card-icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <h3>Locate Near Store</h3>
+                    <p>Experience the furniture touch-and-feel at a Wooden Street experience store.</p>
+                    <span class="card-link">Find Stores &rarr;</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main 3-Column FAQ Section -->
+    <section class="faq-workspace-section">
+        <div class="section-container">
+            <div class="faq-container-3col">
+                <!-- Column 1: Categories Sidebar -->
+                <aside class="faq-sidebar">
+                    <h2 class="sidebar-title">Categories</h2>
+                    <ul class="category-list" id="category-list-element">
+                        <!-- Rendered Dynamically -->
+                    </ul>
+                </aside>
+
+                <!-- Column 2: Question List Pane -->
+                <main class="faq-questions-pane">
+                    <div class="pane-header">
+                        <h2 id="active-category-title">Order Status & Tracking</h2>
+                        <span class="question-count-badge" id="active-question-count">5 questions</span>
+                    </div>
+                    <ul class="question-list" id="question-list-element">
+                        <!-- Rendered Dynamically -->
+                    </ul>
+                </main>
+
+                <!-- Column 3: Answer Display Pane -->
+                <section class="faq-answer-pane" id="faq-answer-pane-element">
+                    <div class="answer-placeholder" id="answer-placeholder-element">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 16v-4"/><path d="M12 8h.01"/><circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        <h3>Select a Question</h3>
+                        <p>Click any question from the list on the left to read the detailed support answer.</p>
+                    </div>
+                    <div class="answer-content-card" id="answer-content-card-element" style="display: none;">
+                        <h2 class="answer-title" id="displayed-answer-title">How do I track my order?</h2>
+                        <div class="answer-body-markdown" id="displayed-answer-body">
+                            <!-- Answer text goes here -->
+                        </div>
+                        <div class="answer-feedback-area">
+                            <span>Was this answer helpful?</span>
+                            <div class="feedback-buttons">
+                                <button class="btn-feedback" id="btn-feedback-yes">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                                    Yes
+                                </button>
+                                <button class="btn-feedback" id="btn-feedback-no">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm12-5h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>
+                                    No
+                                </button>
+                            </div>
+                            <span class="feedback-success-msg" id="feedback-success-msg" style="display: none;">Thank you for your feedback!</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Conversational Chatbot Widget -->
+    <div class="chatbot-wrapper" id="chatbot-wrapper-element">
+        <!-- Floating Chat Icon Button -->
+        <button class="chatbot-trigger" id="chatbot-trigger-btn" aria-label="Open Chatbot Support">
+            <svg class="icon-chat-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <svg class="icon-chat-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            <span class="notification-badge">1</span>
+        </button>
+
+        <!-- Chatbot Window Panel -->
+        <div class="chat-window" id="chat-window-element" style="display: none;">
+            <div class="chat-header">
+                <div class="bot-avatar-active">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop&crop=faces" alt="Bot Support Avatar" class="avatar-img">
+                    <span class="status-indicator"></span>
+                </div>
+                <div class="bot-info">
+                    <h4>Woody</h4>
+                    <p>Wooden Street Support Bot</p>
+                </div>
+                <button class="chat-close-btn" id="chat-close-btn-header">&times;</button>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages-container">
+                <!-- System Greeting Message -->
+                <div class="message message-bot">
+                    <div class="msg-bubble">
+                        Hello! 👋 I'm Woody, your Wooden Street helper. How can I assist you with your furniture order or general inquiries today?
+                    </div>
+                </div>
+                <div class="message message-bot">
+                    <div class="msg-bubble">
+                        Select a topic below, or type your question:
+                    </div>
+                </div>
+                <!-- Chatbot Quick Reply Topics -->
+                <div class="quick-reply-options" id="quick-reply-options-container">
+                    <button class="chip-reply" data-intent="track">📦 Track my order</button>
+                    <button class="chip-reply" data-intent="refund">💰 Refund status</button>
+                    <button class="chip-reply" data-intent="store">🏬 Experience Stores</button>
+                    <button class="chip-reply" data-intent="custom">🧑 Speak to Agent</button>
+                </div>
+            </div>
+
+            <div class="chat-typing-indicator" id="chat-typing-indicator-element" style="display: none;">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" id="chat-text-input" placeholder="Type a message..." autocomplete="off">
+                <button id="chat-send-btn" aria-label="Send Message">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals (Simple overlays for actions like track order or raise ticket) -->
+    <div class="modal-overlay" id="modal-track-order" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close-btn">&times;</button>
+            <h2>Track Your Order</h2>
+            <p>Enter your 6-digit Order ID to check real-time dispatch and delivery status.</p>
+            <div class="form-group">
+                <label for="track-order-id">Order ID</label>
+                <input type="text" id="track-order-id" placeholder="e.g. 582910">
+            </div>
+            <button class="btn-primary" id="btn-submit-track">Track Status</button>
+            <div id="track-result" style="display: none; margin-top: 15px; padding: 15px; border-radius: 6px; background-color: #f8f9fa;"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-raise-ticket" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close-btn">&times;</button>
+            <h2>Raise a Support Ticket</h2>
+            <p>Our executive team will resolve your complaint within 24-48 business hours.</p>
+            <div class="form-group">
+                <label for="ticket-order-id">Order ID (optional)</label>
+                <input type="text" id="ticket-order-id" placeholder="e.g. 582910">
+            </div>
+            <div class="form-group">
+                <label for="ticket-issue-type">Issue Type</label>
+                <select id="ticket-issue-type">
+                    <option>Product Damaged on Arrival</option>
+                    <option>Delayed Delivery</option>
+                    <option>Missing Accessory/Part</option>
+                    <option>Refund/Cancellation Query</option>
+                    <option>Polishing / Finishing Issue</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ticket-description">Explain the issue</label>
+                <textarea id="ticket-description" rows="3" placeholder="Provide details here..."></textarea>
+            </div>
+            <button class="btn-primary" id="btn-submit-ticket">Submit Ticket</button>
+        </div>
+    </div>
+
+    <!-- 4. Deep Dark 6-Column Footer -->
+    <footer class="ws-footer">
+        <div class="footer-container-wide">
+            <div class="footer-links-grid">
+                <div class="footer-column">
+                    <h3>Our Company</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Customer Reviews</a></li>
+                        <li><a href="#">Wooden Street Blog</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Useful Links</h3>
+                    <ul>
+                        <li><a href="#">Custom Furniture</a></li>
+                        <li><a href="#">Experience Stores</a></li>
+                        <li><a href="#">Get a Free Catalog</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Shop By Room</h3>
+                    <ul>
+                        <li><a href="#">Living Room Furniture</a></li>
+                        <li><a href="#">Bedroom Furniture</a></li>
+                        <li><a href="#">Dining Room Furniture</a></li>
+                        <li><a href="#">Study Room Furniture</a></li>
+                        <li><a href="#">Kids Room Furniture</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Partners</h3>
+                    <ul>
+                        <li><a href="#">Franchise Opportunities</a></li>
+                        <li><a href="#">Become a Vendor</a></li>
+                        <li><a href="#">Design Partners</a></li>
+                        <li><a href="#">Hotel & Corporate Sales</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Trusted By</h3>
+                    <ul>
+                        <li><a href="#">10 Lakh+ Customers</a></li>
+                        <li><a href="#">Over 90+ Studios</a></li>
+                        <li><a href="#">Kiln Chamber Seasoning</a></li>
+                        <li><a href="#">Safe Delivery Guarantee</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column contact-column">
+                    <h3>Need Help?</h3>
+                    <p class="phone-link">📞 +91-9314444747</p>
+                    <p class="email-link">✉️ support@woodenstreet.com</p>
+                    <p class="working-hours">Available 9:00 AM - 9:00 PM</p>
+                    <div class="social-icons-row">
+                        <a href="#" class="social-icon">Insta</a>
+                        <a href="#" class="social-icon">Fb</a>
+                        <a href="#" class="social-icon">Tw</a>
+                        <a href="#" class="social-icon">Pin</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom-bar">
+                <p>&copy; 2026 Wooden Street Online Furniture Store. All Rights Reserved. (Clone Demonstration Panel)</p>
+                <div class="payment-badges">
+                    <span class="badge-pay">Visa</span>
+                    <span class="badge-pay">Mastercard</span>
+                    <span class="badge-pay">UPI</span>
+                    <span class="badge-pay">NetBanking</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

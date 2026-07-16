@@ -4,7 +4,7 @@ test.describe('WoodenStreet Help Center FAQ Clone UI Tests', () => {
 
   test.beforeEach(async ({ page }) => {
     // Navigate to the local FAQ clone server running on port 3000
-    await page.goto('http://localhost:3000', { waitUntil: 'load' });
+    await page.goto('http://localhost:3000/clone.html', { waitUntil: 'load' });
     await page.waitForLoadState('networkidle').catch(() => {});
   });
 
