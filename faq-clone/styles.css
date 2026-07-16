@@ -1,23 +1,25 @@
-/* Wooden Street Help Center Custom Stylesheet */
+/* Wooden Street Help Center Custom Stylesheet - Production-Grade Edition */
 :root {
-    --primary-color: #F9763A;          /* Crusta Orange */
+    --primary-color: #F9763A;          /* Wooden Street Crusta Orange */
     --primary-hover: #e37a34;          /* Secondary Orange highlight */
     --primary-light: #fef1e9;          /* Soft orange background tint */
     --text-main: #333333;              /* Mine Shaft Dark Grey */
     --text-muted: #777777;             /* Cool grey secondary text */
-    --text-light: #9ea4ab;
-    --bg-main: #fafafa;                /* Light background */
+    --text-light: #9ea4ab;             /* Light gray placeholder/icons */
+    --bg-main: #fafafa;                /* Page background */
     --bg-card: #ffffff;
     --border-color: #eaecef;
     --border-focus: #ffcfbe;
     --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.1);
-    --radius-sm: 4px;                  /* Harder rectangular corners typical of Wooden Street */
+    
+    /* Layout Tokens */
+    --radius-sm: 4px;                  /* Harder corners matching Wooden Street */
     --radius-md: 6px;
     --radius-lg: 8px;
     --font-sans: 'Red Hat Display', 'Roboto', sans-serif;
-    --transition-smooth: all 0.25s ease-in-out;
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Global Reset */
@@ -34,6 +36,24 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+}
+
+/* Screen Reader Utility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Accessibility Focus States */
+a:focus, button:focus, input:focus, select:focus, textarea:focus, .category-item:focus, .question-item:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
 }
 
 .header-container-wide {
@@ -134,6 +154,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: not-allowed;
 }
 
 .ws-search-btn svg {
@@ -470,7 +491,7 @@ body {
 
 .category-item:hover {
     background: rgba(0,0,0,0.02);
-    transform: translateX(2px);
+    transform: translateX(4px);
 }
 
 .category-item.active {
@@ -569,11 +590,12 @@ body {
     height: 12px;
     flex-shrink: 0;
     color: var(--text-light);
+    transition: var(--transition-smooth);
 }
 
 .question-item:hover .question-chevron, .question-item.active .question-chevron {
     color: var(--primary-color);
-    transform: translateX(2px);
+    transform: translateX(3px);
 }
 
 /* Column 3: Answer Display */
@@ -614,7 +636,7 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    animation: fadeIn 0.25s ease-in-out;
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .answer-title {
@@ -624,6 +646,15 @@ body {
     line-height: 1.35;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 12px;
+}
+
+/* Dynamic Search Highlight Mark tag styles */
+.search-highlight {
+    background: rgba(249, 118, 58, 0.16);
+    color: var(--primary-color);
+    font-weight: 700;
+    border-radius: 2px;
+    padding: 0 2px;
 }
 
 .answer-body-markdown {
@@ -752,7 +783,7 @@ body {
     right: 0;
     width: 350px;
     height: 460px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.6);
@@ -826,12 +857,13 @@ body {
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .message {
     display: flex;
-    max-width: 80%;
+    max-width: 85%;
+    animation: chatMessageFade 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .message-bot {
@@ -1145,7 +1177,7 @@ body {
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(15px); }
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -1154,9 +1186,14 @@ body {
     to { opacity: 1; transform: scale(1); }
 }
 
+@keyframes chatMessageFade {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes typingBounce {
     0%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-4px); }
+    40% { transform: translateY(-5px); }
 }
 
 /* Media Breakpoints */

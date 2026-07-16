@@ -1,11 +1,18 @@
-// Wooden Street FAQ & Support Assistant JavaScript Logic
+/**
+ * Wooden Street FAQ & Conversational Support System
+ * Production-Grade Frontend Component Logic
+ * Features: Modular structure, keyboard navigation, fuzzy chatbot matching, text highlighting.
+ */
 
-// 1. FAQ Data Base
-const faqData = [
+// ==========================================
+// 1. FAQ Structural Dataset
+// ==========================================
+const FAQ_DATABASE = [
     {
         id: "orders",
         title: "Order & Tracking",
-        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`,
+        ariaLabel: "Order and tracking category",
+        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`,
         questions: [
             {
                 q: "How can I check my order status?",
@@ -28,7 +35,8 @@ const faqData = [
     {
         id: "payments",
         title: "Payments & Refunds",
-        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>`,
+        ariaLabel: "Payments and refunds category",
+        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>`,
         questions: [
             {
                 q: "What payment options do you support?",
@@ -47,7 +55,8 @@ const faqData = [
     {
         id: "shipping",
         title: "Shipping & Assembly",
-        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>`,
+        ariaLabel: "Shipping and assembly category",
+        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>`,
         questions: [
             {
                 q: "Do you charge for shipping or delivery?",
@@ -66,7 +75,8 @@ const faqData = [
     {
         id: "returns",
         title: "Returns & Warranty",
-        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>`,
+        ariaLabel: "Returns and warranty category",
+        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>`,
         questions: [
             {
                 q: "What is your return policy?",
@@ -85,7 +95,8 @@ const faqData = [
     {
         id: "customization",
         title: "Customization & Wood",
-        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>`,
+        ariaLabel: "Customization and wood details category",
+        icon: `<svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>`,
         questions: [
             {
                 q: "Can I customize the size or finish of a bed or sofa?",
@@ -103,365 +114,572 @@ const faqData = [
     }
 ];
 
-// 2. Global State variables
-let currentCategoryIndex = 0;
-let currentQuestionIndex = null;
-let feedbackSubmitted = false;
+// ==========================================
+// 2. Application Core State Management
+// ==========================================
+const appState = {
+    currentCategoryIdx: 0,
+    currentQuestionIdx: null,
+    searchQuery: "",
+    chatbotOpen: false,
+    chatbotHistory: [],
+    feedbackStates: {} // Maps query index to like/dislike choice
+};
 
-// DOM Elements
-const categoryListContainer = document.getElementById("category-list-element");
-const questionListContainer = document.getElementById("question-list-element");
-const activeCategoryTitle = document.getElementById("active-category-title");
-const activeQuestionCount = document.getElementById("active-question-count");
-const faqAnswerPane = document.getElementById("faq-answer-pane-element");
-const answerPlaceholder = document.getElementById("answer-placeholder-element");
-const answerContentCard = document.getElementById("answer-content-card-element");
-const displayedAnswerTitle = document.getElementById("displayed-answer-title");
-const displayedAnswerBody = document.getElementById("displayed-answer-body");
-const searchInput = document.getElementById("faq-search-input");
-const searchClearBtn = document.getElementById("search-clear-btn");
+// ==========================================
+// 3. UI Rendering & DOM Synchronization
+// ==========================================
+const DOM = {
+    categoryList: document.getElementById("category-list-element"),
+    questionList: document.getElementById("question-list-element"),
+    categoryTitle: document.getElementById("active-category-title"),
+    questionCount: document.getElementById("active-question-count"),
+    placeholder: document.getElementById("answer-placeholder-element"),
+    contentCard: document.getElementById("answer-content-card-element"),
+    answerTitle: document.getElementById("displayed-answer-title"),
+    answerBody: document.getElementById("displayed-answer-body"),
+    searchInput: document.getElementById("faq-search-input"),
+    searchClearBtn: document.getElementById("search-clear-btn"),
+    feedbackYes: document.getElementById("btn-feedback-yes"),
+    feedbackNo: document.getElementById("btn-feedback-no"),
+    feedbackSuccess: document.getElementById("feedback-success-msg")
+};
 
-// 3. Render categories sidebar
-function renderCategories() {
-    categoryListContainer.innerHTML = "";
-    faqData.forEach((category, index) => {
-        const li = document.createElement("li");
-        li.className = `category-item ${index === currentCategoryIndex ? "active" : ""}`;
-        li.innerHTML = `
+/**
+ * Wraps matching query terms in text with highlighting tags.
+ */
+function highlightSearchTerms(text, query) {
+    if (!query) return text;
+    const escapedQuery = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const regex = new RegExp(`(${escapedQuery})`, 'gi');
+    return text.replace(regex, '<mark class="search-highlight">$1</mark>');
+}
+
+/**
+ * Render the L1 categories in the Left column.
+ */
+function renderSidebar() {
+    if (!DOM.categoryList) return;
+    DOM.categoryList.innerHTML = "";
+    
+    FAQ_DATABASE.forEach((category, idx) => {
+        const item = document.createElement("li");
+        item.className = `category-item ${idx === appState.currentCategoryIdx ? "active" : ""}`;
+        item.setAttribute("role", "tab");
+        item.setAttribute("aria-selected", idx === appState.currentCategoryIdx ? "true" : "false");
+        item.setAttribute("tabindex", "0");
+        item.setAttribute("aria-label", category.ariaLabel);
+        
+        item.innerHTML = `
             <div class="category-label">
                 ${category.icon}
                 <span>${category.title}</span>
             </div>
-            <span class="category-badge">${category.questions.length}</span>
+            <span class="category-badge" aria-label="${category.questions.length} questions">${category.questions.length}</span>
         `;
-        li.addEventListener("click", () => {
-            currentCategoryIndex = index;
-            currentQuestionIndex = null;
-            renderCategories();
-            renderQuestions();
-            resetAnswerPane();
+        
+        // Clicks
+        item.addEventListener("click", () => selectCategory(idx));
+        // Keyboard (Space/Enter)
+        item.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                selectCategory(idx);
+            }
         });
-        categoryListContainer.appendChild(li);
+        
+        DOM.categoryList.appendChild(item);
     });
 }
 
-// 4. Render questions in the middle column
-function renderQuestions(customList = null) {
-    questionListContainer.innerHTML = "";
-    const listToRender = customList || faqData[currentCategoryIndex].questions;
+function selectCategory(idx) {
+    appState.currentCategoryIdx = idx;
+    appState.currentQuestionIdx = null;
+    appState.searchQuery = "";
+    if (DOM.searchInput) DOM.searchInput.value = "";
+    if (DOM.searchClearBtn) DOM.searchClearBtn.style.display = "none";
+    
+    renderSidebar();
+    renderQuestionsList();
+    clearAnswerPanel();
+}
 
-    if (customList) {
-        activeCategoryTitle.textContent = "Search Results";
-        activeQuestionCount.textContent = `${customList.length} questions found`;
+/**
+ * Render the questions under selected category or search results in the Middle column.
+ */
+function renderQuestionsList(customQuestions = null) {
+    if (!DOM.questionList) return;
+    DOM.questionList.innerHTML = "";
+    
+    const list = customQuestions || FAQ_DATABASE[appState.currentCategoryIdx].questions;
+    
+    if (customQuestions) {
+        DOM.categoryTitle.textContent = "Search Results";
+        DOM.questionCount.textContent = `${list.length} questions found`;
     } else {
-        activeCategoryTitle.textContent = faqData[currentCategoryIndex].title;
-        activeQuestionCount.textContent = `${listToRender.length} questions`;
+        DOM.categoryTitle.textContent = FAQ_DATABASE[appState.currentCategoryIdx].title;
+        DOM.questionCount.textContent = `${list.length} questions`;
     }
-
-    if (listToRender.length === 0) {
-        questionListContainer.innerHTML = `
-            <div style="padding: 30px; text-align: center; color: var(--text-light); font-size: 14px;">
-                No questions found matching your query.
-            </div>
+    
+    if (list.length === 0) {
+        DOM.questionList.innerHTML = `
+            <li class="no-results-msg" style="padding: 30px; text-align: center; color: var(--text-muted); font-size: 13.5px;">
+                No questions found. Try general keywords like "refund", "delivery" or "wood finish".
+            </li>
         `;
         return;
     }
-
-    listToRender.forEach((item, index) => {
-        const li = document.createElement("li");
-        li.className = `question-item ${index === currentQuestionIndex ? "active" : ""}`;
-        li.innerHTML = `
-            <span>${item.q}</span>
-            <svg class="question-chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    
+    list.forEach((item, idx) => {
+        const itemEl = document.createElement("li");
+        itemEl.className = `question-item ${idx === appState.currentQuestionIdx ? "active" : ""}`;
+        itemEl.setAttribute("role", "button");
+        itemEl.setAttribute("tabindex", "0");
+        
+        // Highlight terms if search is active
+        const qTitle = highlightSearchTerms(item.q, appState.searchQuery);
+        
+        itemEl.innerHTML = `
+            <span>${qTitle}</span>
+            <svg class="question-chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
         `;
-        li.addEventListener("click", () => {
-            currentQuestionIndex = index;
-            // Unhighlight other list items
-            const allItems = questionListContainer.querySelectorAll(".question-item");
-            allItems.forEach(el => el.classList.remove("active"));
-            li.classList.add("active");
+        
+        // Selection handlers
+        const select = () => {
+            appState.currentQuestionIdx = idx;
+            const siblings = DOM.questionList.querySelectorAll(".question-item");
+            siblings.forEach(el => el.classList.remove("active"));
+            itemEl.classList.add("active");
             displayAnswer(item);
+        };
+        
+        itemEl.addEventListener("click", select);
+        itemEl.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                select();
+            }
         });
-        questionListContainer.appendChild(li);
+        
+        DOM.questionList.appendChild(itemEl);
     });
 }
 
-// Display selected answer details on the right panel
+/**
+ * Render selected Answer on the Right pane.
+ */
 function displayAnswer(item) {
-    answerPlaceholder.style.display = "none";
-    answerContentCard.style.display = "flex";
-    displayedAnswerTitle.textContent = item.q;
-    displayedAnswerBody.innerHTML = item.a;
-
-    // Reset feedback area
-    feedbackSubmitted = false;
-    document.getElementById("btn-feedback-yes").style.display = "flex";
-    document.getElementById("btn-feedback-no").style.display = "flex";
-    document.getElementById("feedback-success-msg").style.display = "none";
-}
-
-// Reset right answer panel when category changes
-function resetAnswerPane() {
-    answerPlaceholder.style.display = "flex";
-    answerContentCard.style.display = "none";
-}
-
-// 5. Search Functionality
-searchInput.addEventListener("input", (e) => {
-    const query = e.target.value.toLowerCase().trim();
-    if (query.length > 0) {
-        searchClearBtn.style.display = "block";
-        // Search across all categories
-        let results = [];
-        faqData.forEach(cat => {
-            cat.questions.forEach(qItem => {
-                if (qItem.q.toLowerCase().includes(query) || qItem.a.toLowerCase().includes(query)) {
-                    results.push(qItem);
-                }
-            });
-        });
-        currentQuestionIndex = null;
-        renderQuestions(results);
-        resetAnswerPane();
+    if (!DOM.contentCard) return;
+    DOM.placeholder.style.display = "none";
+    DOM.contentCard.style.display = "flex";
+    
+    const highlightedQ = highlightSearchTerms(item.q, appState.searchQuery);
+    const highlightedA = highlightSearchTerms(item.a, appState.searchQuery);
+    
+    DOM.answerTitle.innerHTML = highlightedQ;
+    DOM.answerBody.innerHTML = highlightedA;
+    
+    // Reset feedback UI
+    const feedbackKey = `${appState.currentCategoryIdx}-${appState.currentQuestionIdx}`;
+    if (appState.feedbackStates[feedbackKey]) {
+        DOM.feedbackYes.style.display = "none";
+        DOM.feedbackNo.style.display = "none";
+        DOM.feedbackSuccess.style.display = "block";
+        DOM.feedbackSuccess.textContent = "Thank you for rating this answer!";
     } else {
-        searchClearBtn.style.display = "none";
-        renderCategories();
-        renderQuestions();
-        resetAnswerPane();
+        DOM.feedbackYes.style.display = "flex";
+        DOM.feedbackNo.style.display = "flex";
+        DOM.feedbackSuccess.style.display = "none";
     }
-});
+}
 
-// Clear Search button
-searchClearBtn.addEventListener("click", () => {
-    searchInput.value = "";
-    searchClearBtn.style.display = "none";
-    renderCategories();
-    renderQuestions();
-    resetAnswerPane();
-});
+function clearAnswerPanel() {
+    if (!DOM.contentCard) return;
+    DOM.placeholder.style.display = "flex";
+    DOM.contentCard.style.display = "none";
+}
 
-// Trending Topic buttons click handler
+// Search Inputs
+if (DOM.searchInput) {
+    DOM.searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.trim();
+        appState.searchQuery = query;
+        
+        if (query.length > 0) {
+            if (DOM.searchClearBtn) DOM.searchClearBtn.style.display = "block";
+            
+            // Search across entire category tree
+            let matchingQuestions = [];
+            FAQ_DATABASE.forEach(cat => {
+                cat.questions.forEach(qItem => {
+                    const matchQ = qItem.q.toLowerCase().includes(query.toLowerCase());
+                    const matchA = qItem.a.toLowerCase().includes(query.toLowerCase());
+                    if (matchQ || matchA) {
+                        matchingQuestions.push(qItem);
+                    }
+                });
+            });
+            appState.currentQuestionIdx = null;
+            renderQuestionsList(matchingQuestions);
+            clearAnswerPanel();
+        } else {
+            if (DOM.searchClearBtn) DOM.searchClearBtn.style.display = "none";
+            renderSidebar();
+            renderQuestionsList();
+            clearAnswerPanel();
+        }
+    });
+}
+
+if (DOM.searchClearBtn) {
+    DOM.searchClearBtn.addEventListener("click", () => {
+        DOM.searchInput.value = "";
+        appState.searchQuery = "";
+        DOM.searchClearBtn.style.display = "none";
+        renderSidebar();
+        renderQuestionsList();
+        clearAnswerPanel();
+    });
+}
+
+// Popular Quick Tags
 document.querySelectorAll(".trend-tag").forEach(tag => {
     tag.addEventListener("click", () => {
-        const topic = tag.textContent;
-        searchInput.value = topic;
-        searchInput.dispatchEvent(new Event('input'));
+        const text = tag.textContent;
+        if (DOM.searchInput) {
+            DOM.searchInput.value = text;
+            DOM.searchInput.dispatchEvent(new Event("input"));
+        }
     });
 });
 
-// 6. Feedback handlers
-document.getElementById("btn-feedback-yes").addEventListener("click", submitFeedback);
-document.getElementById("btn-feedback-no").addEventListener("click", submitFeedback);
-
-function submitFeedback() {
-    if (feedbackSubmitted) return;
-    feedbackSubmitted = true;
-    document.getElementById("btn-feedback-yes").style.display = "none";
-    document.getElementById("btn-feedback-no").style.display = "none";
-    document.getElementById("feedback-success-msg").style.display = "block";
+// Feedback handlers
+if (DOM.feedbackYes && DOM.feedbackNo) {
+    DOM.feedbackYes.addEventListener("click", () => recordFeedback(true));
+    DOM.feedbackNo.addEventListener("click", () => recordFeedback(false));
 }
 
-// 7. Modals Logic
+function recordFeedback(liked) {
+    const key = `${appState.currentCategoryIdx}-${appState.currentQuestionIdx}`;
+    appState.feedbackStates[key] = liked ? "liked" : "disliked";
+    
+    DOM.feedbackYes.style.display = "none";
+    DOM.feedbackNo.style.display = "none";
+    DOM.feedbackSuccess.style.display = "block";
+    DOM.feedbackSuccess.textContent = liked 
+        ? "Glad to help! Thanks for rating." 
+        : "Thanks for reporting. We will update this answer.";
+}
+
+// ==========================================
+// 4. Custom Support Modals (Ticket / Tracker)
+// ==========================================
 const modalTrack = document.getElementById("modal-track-order");
 const modalTicket = document.getElementById("modal-raise-ticket");
 
-function setupModals() {
-    // Open Track Modal
-    document.getElementById("action-track-order").addEventListener("click", () => {
-        modalTrack.style.display = "flex";
-    });
-    // Open Ticket Modal
-    document.getElementById("action-raise-ticket").addEventListener("click", () => {
-        modalTicket.style.display = "flex";
-    });
+function initModals() {
+    const trackCard = document.getElementById("action-track-order");
+    const ticketCard = document.getElementById("action-raise-ticket");
+    const ticketBanner = document.getElementById("btn-raise-ticket-banner");
+    const storeLocator = document.getElementById("action-store-locator");
     
-    const bannerTicketBtn = document.getElementById("btn-raise-ticket-banner");
-    if (bannerTicketBtn) {
-        bannerTicketBtn.addEventListener("click", () => {
-            modalTicket.style.display = "flex";
+    if (trackCard) trackCard.addEventListener("click", () => openModal(modalTrack));
+    if (ticketCard) ticketCard.addEventListener("click", () => openModal(modalTicket));
+    if (ticketBanner) ticketBanner.addEventListener("click", () => openModal(modalTicket));
+    
+    if (storeLocator) {
+        storeLocator.addEventListener("click", () => {
+            alert("Redirecting to Wooden Street Store Locator page...\nOver 90+ studios in Bangalore, Mumbai, Chennai, Pune, Jaipur, and more!");
         });
     }
-
-    // Store Locator Action (Dummy redirect / Alert)
-    document.getElementById("action-store-locator").addEventListener("click", () => {
-        alert("Redirecting to Wooden Street Store Locator page...\nOver 90+ studios in Bangalore, Mumbai, Delhi, Hyderabad, and more!");
-    });
-
-    // Close Modals
+    
     document.querySelectorAll(".modal-close-btn").forEach(btn => {
         btn.addEventListener("click", () => {
-            modalTrack.style.display = "none";
-            modalTicket.style.display = "none";
+            closeAllModals();
         });
     });
+    
+    // Close on overlay click
+    window.addEventListener("click", (e) => {
+        if (e.target === modalTrack) closeModal(modalTrack);
+        if (e.target === modalTicket) closeModal(modalTicket);
+    });
 
-    // Handle track submission
-    document.getElementById("btn-submit-track").addEventListener("click", () => {
-        const orderId = document.getElementById("track-order-id").value.trim();
-        const resultDiv = document.getElementById("track-result");
-        
-        if (!orderId) {
-            alert("Please enter a valid Order ID");
-            return;
+    // Close on ESC key
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            closeAllModals();
         }
-
-        resultDiv.style.display = "block";
-        resultDiv.innerHTML = `
-            <div style="font-weight: 700; color: var(--primary-color); margin-bottom: 8px;">Order Status for #${orderId}</div>
-            <div style="font-size: 13px; line-height: 1.5;">
-                <p>🟢 <strong>Status:</strong> Dispatched from Jodhpur Warehouse</p>
-                <p>📍 <strong>Current Location:</strong> Jaipur Sorting Facility</p>
-                <p>📅 <strong>Expected Delivery:</strong> 22-July-2026</p>
-                <div style="margin-top: 10px; height: 4px; background: #e5e5e5; border-radius: 2px; position: relative;">
-                    <div style="position: absolute; top: 0; left: 0; width: 66%; height: 100%; background: var(--primary-color); border-radius: 2px;"></div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 10px; margin-top: 4px; color: var(--text-muted);">
-                    <span>Ordered</span>
-                    <span>Dispatched</span>
-                    <span>Out for Delivery</span>
-                </div>
-            </div>
-        `;
     });
-
-    // Handle ticket submission
-    document.getElementById("btn-submit-ticket").addEventListener("click", () => {
-        alert("Your support ticket has been submitted successfully!\nTicket Ref ID: WS-TKT-92041\nOur executive team will contact you within 24 hours.");
-        modalTicket.style.display = "none";
-        document.getElementById("ticket-order-id").value = "";
-        document.getElementById("ticket-description").value = "";
-    });
+    
+    // Submission - Track Order
+    const trackSubmit = document.getElementById("btn-submit-track");
+    if (trackSubmit) {
+        trackSubmit.addEventListener("click", () => {
+            const orderInput = document.getElementById("track-order-id").value.trim();
+            const resultDiv = document.getElementById("track-result");
+            
+            if (!orderInput) {
+                alert("Please enter a valid 6-digit Order ID.");
+                return;
+            }
+            
+            resultDiv.style.display = "block";
+            resultDiv.innerHTML = `
+                <div style="font-weight: 700; color: var(--primary-color); font-size: 13.5px; margin-bottom: 8px;">Order Tracker Info (#${orderInput})</div>
+                <div style="font-size: 12.5px; line-height: 1.5; color: #444;">
+                    <p>📦 <strong>Status:</strong> Seasoned & Polished (Kiln treatment complete)</p>
+                    <p>🚚 <strong>Milestone:</strong> Out of Jodhpur factory, in Jaipur transit warehouse.</p>
+                    <p>📅 <strong>Scheduled Delivery:</strong> 25-July-2026</p>
+                    <div style="margin-top: 10px; height: 5px; background: #e5e5e5; border-radius: 4px; position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: 0; width: 75%; height: 100%; background: var(--primary-color);"></div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    // Submission - Raise Ticket
+    const ticketSubmit = document.getElementById("btn-submit-ticket");
+    if (ticketSubmit) {
+        ticketSubmit.addEventListener("click", () => {
+            const type = document.getElementById("ticket-issue-type").value;
+            const desc = document.getElementById("ticket-description").value.trim();
+            
+            if (!desc) {
+                alert("Please enter a description of the issue.");
+                return;
+            }
+            
+            alert(`Complaint filed successfully!\nIssue: ${type}\nReference ID: WS-COMP-17849\nAn audit agent will reach out in 24 business hours.`);
+            closeModal(modalTicket);
+            document.getElementById("ticket-description").value = "";
+        });
+    }
 }
 
-// 8. Conversational Chatbot Logic
-const chatbotTrigger = document.getElementById("chatbot-trigger-btn");
-const chatWindow = document.getElementById("chat-window-element");
-const chatCloseHeader = document.getElementById("chat-close-btn-header");
-const chatMessagesContainer = document.getElementById("chat-messages-container");
-const chatTextInput = document.getElementById("chat-text-input");
-const chatSendBtn = document.getElementById("chat-send-btn");
-const typingIndicator = document.getElementById("chat-typing-indicator-element");
+function openModal(modal) {
+    if (modal) modal.style.display = "flex";
+}
 
-function setupChatbot() {
-    // Toggle Chat window
-    chatbotTrigger.addEventListener("click", () => {
-        const isHidden = chatWindow.style.display === "none";
-        chatWindow.style.display = isHidden ? "flex" : "none";
+function closeModal(modal) {
+    if (modal) modal.style.display = "none";
+}
+
+function closeAllModals() {
+    closeModal(modalTrack);
+    closeModal(modalTicket);
+}
+
+// ==========================================
+// 5. Intelligent Support Chatbot (Woody)
+// ==========================================
+const botState = {
+    triggerBtn: document.getElementById("chatbot-trigger-btn"),
+    windowPanel: document.getElementById("chat-window-element"),
+    closeHeader: document.getElementById("chat-close-btn-header"),
+    messagesContainer: document.getElementById("chat-messages-container"),
+    textInput: document.getElementById("chat-text-input"),
+    sendBtn: document.getElementById("chat-send-btn"),
+    typingDots: document.getElementById("chat-typing-indicator-element"),
+    replyContainer: document.getElementById("quick-reply-options-container")
+};
+
+// Keyword mapping for fuzzy replies
+const BOT_KEYWORDS = {
+    greetings: {
+        keys: ["hi", "hello", "hey", "good morning", "good afternoon", "support"],
+        reply: "Hello! 👋 I'm Woody, your Wooden Street helper. Ask me about your order, wood details, returns, or payment options!"
+    },
+    tracking: {
+        keys: ["track", "status", "where is", "order id", "delivery status", "location"],
+        reply: "📦 <strong>Track Order Status:</strong><br>You can input your Order ID inside the 'Track My Order' modal above. Alternatively, tell me your Order ID number here and I'll fetch itsजयपुर staging status."
+    },
+    refunds: {
+        keys: ["refund", "cancel", "money", "returned money", "cancellation"],
+        reply: "💰 <strong>Refund timeline:</strong><br>Refund approvals trigger within 48 hours of product pickup. Funds take 5-7 banking days to credit back to card balances or UPI accounts."
+    },
+    wood: {
+        keys: ["wood", "quality", "material", "sheesham", "mango", "solid wood"],
+        reply: "🪵 <strong>Solid Wood Quality:</strong><br>Our structures are crafted from chemical-seasoned, vacuum-treated <strong>Sheesham Wood (Rosewood)</strong> or durable <strong>Mango Wood</strong>, protected with structural warranty parameters."
+    },
+    delivery: {
+        keys: ["delivery", "shipping", "charges", "charge", "free shipping", "assemble", "assembly"],
+        reply: "🚚 <strong>Free Assembly & Delivery:</strong><br>We provide free delivery and assembly on orders exceeding ₹5,000. Setup technicians coordinate appointments within 24-48 hours of shipment arrival."
+    },
+    contact: {
+        keys: ["agent", "human", "speak to", "phone", "number", "email", "customer care"],
+        reply: "🧑 <strong>Support Team Contact:</strong><br>You can talk directly to an associate at <strong>+91-9314444747</strong> (9 AM to 9 PM) or email <strong>support@woodenstreet.com</strong>."
+    }
+};
+
+function initChatbot() {
+    if (!botState.triggerBtn) return;
+    
+    // Toggle Window panel
+    botState.triggerBtn.addEventListener("click", () => {
+        appState.chatbotOpen = !appState.chatbotOpen;
+        botState.windowPanel.style.display = appState.chatbotOpen ? "flex" : "none";
         
-        // Hide badge on first click
-        const badge = chatbotTrigger.querySelector(".notification-badge");
+        // Hide initial alert badge
+        const badge = botState.triggerBtn.querySelector(".notification-badge");
         if (badge) badge.style.display = "none";
-
-        // Toggle Icons
-        chatbotTrigger.querySelector(".icon-chat-open").style.display = isHidden ? "none" : "block";
-        chatbotTrigger.querySelector(".icon-chat-close").style.display = isHidden ? "block" : "none";
-
-        if (isHidden) {
-            scrollToBottom();
-            chatTextInput.focus();
+        
+        // Switch trigger icon shapes
+        botState.triggerBtn.querySelector(".icon-chat-open").style.display = appState.chatbotOpen ? "none" : "block";
+        botState.triggerBtn.querySelector(".icon-chat-close").style.display = appState.chatbotOpen ? "block" : "none";
+        
+        if (appState.chatbotOpen) {
+            scrollChatToBottom();
+            botState.textInput.focus();
         }
     });
+    
+    // Close button
+    if (botState.closeHeader) {
+        botState.closeHeader.addEventListener("click", () => {
+            appState.chatbotOpen = false;
+            botState.windowPanel.style.display = "none";
+            botState.triggerBtn.querySelector(".icon-chat-open").style.display = "block";
+            botState.triggerBtn.querySelector(".icon-chat-close").style.display = "none";
+        });
+    }
+    
+    // Send actions
+    if (botState.sendBtn) {
+        botState.sendBtn.addEventListener("click", sendUserChatMessage);
+    }
+    if (botState.textInput) {
+        botState.textInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                sendUserChatMessage();
+            }
+        });
+    }
+    
+    // Quick replies binding
+    bindQuickReplies();
+}
 
-    chatCloseHeader.addEventListener("click", () => {
-        chatWindow.style.display = "none";
-        chatbotTrigger.querySelector(".icon-chat-open").style.display = "block";
-        chatbotTrigger.querySelector(".icon-chat-close").style.display = "none";
-    });
-
-    // Send on click or Enter
-    chatSendBtn.addEventListener("click", handleUserMessage);
-    chatTextInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-            handleUserMessage();
-        }
-    });
-
-    // Quick reply chips
-    document.querySelectorAll(".chip-reply").forEach(chip => {
+function bindQuickReplies() {
+    if (!botState.replyContainer) return;
+    botState.replyContainer.querySelectorAll(".chip-reply").forEach(chip => {
         chip.addEventListener("click", (e) => {
-            const queryText = e.target.textContent.substring(2); // Strip emoji
-            chatTextInput.value = queryText;
-            handleUserMessage();
+            const rawText = e.target.textContent;
+            // Clean emojis
+            const cleanText = rawText.replace(/[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, "").trim();
+            botState.textInput.value = cleanText;
+            sendUserChatMessage();
         });
     });
 }
 
-function handleUserMessage() {
-    const text = chatTextInput.value.trim();
+function sendUserChatMessage() {
+    const text = botState.textInput.value.trim();
     if (!text) return;
-
-    // 1. Add User bubble
-    addMessageBubble(text, "user");
-    chatTextInput.value = "";
-    scrollToBottom();
-
-    // 2. Simulate Bot response after delay
-    showTyping(true);
     
+    // Add user bubble
+    addChatBubble(text, "user");
+    botState.textInput.value = "";
+    scrollChatToBottom();
+    
+    // Show typing dots
+    setTypingState(true);
+    
+    // Process response after delay
     setTimeout(() => {
-        showTyping(false);
-        const reply = generateBotReply(text);
-        addMessageBubble(reply, "bot");
-        scrollToBottom();
-    }, 1200);
+        setTypingState(false);
+        const replyText = matchBotResponse(text);
+        addChatBubble(replyText, "bot");
+        scrollChatToBottom();
+    }, 1100);
 }
 
-function addMessageBubble(text, sender) {
-    const msgDiv = document.createElement("div");
-    msgDiv.className = `message message-${sender}`;
-    msgDiv.innerHTML = `<div class="msg-bubble">${text}</div>`;
-    chatMessagesContainer.appendChild(msgDiv);
+function addChatBubble(text, sender) {
+    const bubble = document.createElement("div");
+    bubble.className = `message message-${sender}`;
+    
+    // Formatting timestamp
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const nameLabel = sender === "bot" ? `Woody • ${timeStr}` : `You • ${timeStr}`;
+    
+    bubble.innerHTML = `
+        <div class="msg-bubble">
+            <span class="msg-author-meta" style="display: block; font-size: 10px; opacity: 0.6; margin-bottom: 4px; font-weight: 700;">${nameLabel}</span>
+            <div class="msg-content">${text}</div>
+            ${sender === "bot" ? `<div class="bot-bubble-rating" style="margin-top: 6px; display: flex; gap: 8px; justify-content: flex-end; opacity: 0.8;">
+                <button class="btn-rate-bot" onclick="rateBotMsg(this, true)" style="border:none; background:none; cursor:pointer; font-size:10px;">👍</button>
+                <button class="btn-rate-bot" onclick="rateBotMsg(this, false)" style="border:none; background:none; cursor:pointer; font-size:10px;">👎</button>
+            </div>` : ""}
+        </div>
+    `;
+    
+    botState.messagesContainer.appendChild(bubble);
 }
 
-function showTyping(show) {
-    typingIndicator.style.display = show ? "flex" : "none";
-    if (show) scrollToBottom();
+// Direct message bubble feedback callback
+window.rateBotMsg = function(button, liked) {
+    const parent = button.parentElement;
+    parent.innerHTML = `<span style="font-size: 9px; color: var(--text-muted);">${liked ? "Liked!" : "Feedback recorded."}</span>`;
+};
+
+function setTypingState(typing) {
+    if (!botState.typingDots) return;
+    botState.typingDots.style.display = typing ? "flex" : "none";
+    if (typing) scrollChatToBottom();
 }
 
-function scrollToBottom() {
-    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+function scrollChatToBottom() {
+    if (botState.messagesContainer) {
+        botState.messagesContainer.scrollTop = botState.messagesContainer.scrollHeight;
+    }
 }
 
-// Bot automated responses matching keywords
-function generateBotReply(userInput) {
-    const text = userInput.toLowerCase();
-
-    if (text.includes("track") || text.includes("status") || text.includes("where is my")) {
-        return `📦 <strong>Tracking your order:</strong><br>You can instantly look up your parcel. Let me fetch the options: Click the <strong>'Track My Order'</strong> button above, or reply with your 6-digit Order ID (e.g. 582910) to search Jaipur routing updates.`;
+/**
+ * Fuzzy Keyword Weighted Matcher
+ */
+function matchBotResponse(userInput) {
+    const cleanInput = userInput.toLowerCase();
+    
+    let bestMatchKey = "default";
+    let highestWeight = 0;
+    
+    for (const category in BOT_KEYWORDS) {
+        const data = BOT_KEYWORDS[category];
+        let weight = 0;
+        
+        data.keys.forEach(keyword => {
+            if (cleanInput.includes(keyword)) {
+                weight += keyword.length; // longer matching keywords yield higher weights
+            }
+        });
+        
+        if (weight > highestWeight) {
+            highestWeight = weight;
+            bestMatchKey = category;
+        }
     }
     
-    if (text.includes("refund") || text.includes("money back") || text.includes("reimburse")) {
-        return `💰 <strong>Refund Policy:</strong><br>Once our QC team approves cancellations or returns, refunds are initiated within 48 business hours. The funds typically credit back to your account in 5-7 business days depending on your bank.`;
+    if (bestMatchKey !== "default") {
+        return BOT_KEYWORDS[bestMatchKey].reply;
     }
-
-    if (text.includes("store") || text.includes("locate") || text.includes("showroom") || text.includes("nearest")) {
-        return `🏬 <strong>Wooden Street Experience Stores:</strong><br>We have over 90+ studios in India! Visitors can inspect wood textures and fabric finishes. You can check the nearest studio via Jaipur, Bangalore, Mumbai, or Delhi guides. Click the <strong>Store Locator</strong> above for directions.`;
+    
+    // Check if input contains a number (likely checking Order ID)
+    if (/\d{5,8}/.test(cleanInput)) {
+        const orderNum = cleanInput.match(/\d{5,8}/)[0];
+        return `📦 Checking order <strong>#${orderNum}</strong>... Jaipur sorting updates confirm dispatch validation. Your package is scheduled for arrival on 25-July-2026.`;
     }
-
-    if (text.includes("agent") || text.includes("human") || text.includes("speak") || text.includes("contact") || text.includes("number")) {
-        return `🧑 <strong>Customer Care Team:</strong><br>You can call us directly at <strong>+91-9314444747</strong> (9 AM - 9 PM) or email us at <b>support@woodenstreet.com</b>. If you wish, click the <strong>'Raise Ticket'</strong> button above to report structural issues.`;
-    }
-
-    if (text.includes("wood") || text.includes("material") || text.includes("sheesham") || text.includes("mango")) {
-        return `🪵 <strong>Quality & Wood Specifications:</strong><br>We design using premium <strong>Sheesham Wood (Rosewood)</strong> and high-grade <strong>Mango Wood</strong>. All structural lumber undergoes chemical seasoning and kiln treatment for termite and wrap protection, backed by our 1-year structural warranty.`;
-    }
-
-    if (text.includes("delivery") || text.includes("ship") || text.includes("transit") || text.includes("charge")) {
-        return `🚚 <strong>Shipping & Delivery Details:</strong><br>We provide free shipping and free professional home assembly for all purchases above ₹5,000 across India. Technicians generally schedule visits within 24-48 hours of packet delivery.`;
-    }
-
-    if (text.includes("hi") || text.includes("hello") || text.includes("hey") || text.includes("good morning")) {
-        return `Hello! 😊 Nice to chat with you. How can I help you navigate your Wooden Street journey today? Ask me about order tracking, wood customization, refunds, or warranty details.`;
-    }
-
-    // Default Fallback
-    return `I apologize, I didn't fully catch that. 🧐<br>Could you please rephrase, or use one of the quick options? You can also raise a support ticket or call our service desk at +91-9314444747 for assistance.`;
+    
+    return `I apologize, I didn't catch that. 🧐<br>Could you please rephrase, or choose one of our quick topics? Alternatively, raise a support ticket or call customer care at +91-9314444747.`;
 }
 
-// 9. Initial Load Setup
+// ==========================================
+// 6. Application Initializer
+// ==========================================
 window.addEventListener("DOMContentLoaded", () => {
-    renderCategories();
-    renderQuestions();
-    setupModals();
-    setupChatbot();
+    renderSidebar();
+    renderQuestionsList();
+    initModals();
+    initChatbot();
 });

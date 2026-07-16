@@ -98,7 +98,7 @@ test.describe('WoodenStreet Help Center FAQ Clone UI Tests', () => {
 
     const result = page.locator('#track-result');
     await expect(result).toBeVisible();
-    await expect(result).toContainText('Dispatched from Jodhpur');
+    await expect(result).toContainText('Out of Jodhpur');
 
     // Close Track modal
     await trackModal.locator('.modal-close-btn').click();
