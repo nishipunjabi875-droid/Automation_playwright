@@ -274,10 +274,14 @@ function setupModals() {
     document.getElementById("action-raise-ticket").addEventListener("click", () => {
         modalTicket.style.display = "flex";
     });
-    document.getElementById("btn-raise-ticket-nav").addEventListener("click", (e) => {
-        e.preventDefault();
-        modalTicket.style.display = "flex";
-    });
+    
+    const bannerTicketBtn = document.getElementById("btn-raise-ticket-banner");
+    if (bannerTicketBtn) {
+        bannerTicketBtn.addEventListener("click", () => {
+            modalTicket.style.display = "flex";
+        });
+    }
+
     // Store Locator Action (Dummy redirect / Alert)
     document.getElementById("action-store-locator").addEventListener("click", () => {
         alert("Redirecting to Wooden Street Store Locator page...\nOver 90+ studios in Bangalore, Mumbai, Delhi, Hyderabad, and more!");

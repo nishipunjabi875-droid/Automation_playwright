@@ -4,52 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Help Center | Wooden Street FAQ & Support Assistant</title>
-    <!-- Premium Google Fonts -->
+    <!-- Premium Google Fonts matching Wooden Street typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Top Navigation Header -->
-    <header class="main-header">
-        <div class="header-container">
-            <a href="#" class="logo-area">
-                <span class="logo-accent">Wooden</span><span class="logo-main">Street</span>
-                <span class="logo-tag">Help Center</span>
+    <!-- 1. Top Utility Header Bar -->
+    <div class="top-header-bar">
+        <div class="header-container-wide">
+            <div class="top-bar-left">
+                <a href="#">Furniture</a>
+                <a href="#">Home Interiors</a>
+                <a href="#">Bulk Order</a>
+            </div>
+            <div class="top-bar-right">
+                <a href="#">📞 +91-9314444747</a>
+                <a href="#">Franchise</a>
+                <a href="#">Track Order</a>
+                <a href="#" class="active">Help Center</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Main Logo & Search Bar Tier -->
+    <header class="main-branding-header">
+        <div class="header-container-wide">
+            <!-- Brand Logo -->
+            <a href="#" class="ws-logo">
+                <span class="logo-txt-orange">wooden</span><span class="logo-txt-black">street</span>
             </a>
-            <nav class="nav-links">
-                <a href="#" class="nav-link">Home</a>
-                <a href="#" class="nav-link">Shop Furniture</a>
-                <a href="#" class="nav-link active">FAQs</a>
-                <a href="#" class="btn-ticket" id="btn-raise-ticket-nav">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                    Raise Ticket
+
+            <!-- Central Product Search -->
+            <div class="ws-product-search-box">
+                <input type="text" placeholder="Search Products, Color & More..." disabled>
+                <button class="ws-search-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+            </div>
+
+            <!-- Right Utilities Icons -->
+            <div class="ws-header-utilities">
+                <a href="#" class="utility-icon" title="Stores">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <span>Stores</span>
                 </a>
-            </nav>
+                <a href="#" class="utility-icon" title="Profile">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="utility-icon" title="Wishlist">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    <span>Wishlist</span>
+                </a>
+                <a href="#" class="utility-icon cart-icon" title="Cart">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    <span class="cart-badge">0</span>
+                    <span>Cart</span>
+                </a>
+            </div>
         </div>
     </header>
 
-    <!-- Search Hero Section -->
-    <section class="search-hero">
-        <div class="hero-glow"></div>
-        <div class="hero-container">
-            <h1>How can we help you today?</h1>
-            <p class="hero-subtitle">Search our knowledge base or browse categories below to find answers instantly.</p>
-            <div class="search-wrapper">
-                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" id="faq-search-input" placeholder="Type keywords like 'refund', 'order status', 'delivery time'..." autocomplete="off">
-                <button class="search-clear-btn" id="search-clear-btn" style="display: none;">&times;</button>
+    <!-- 3. Category Horizontal Menu Bar -->
+    <nav class="ws-category-navbar">
+        <div class="header-container-wide">
+            <ul class="category-menu-links">
+                <li><a href="#">Sofas</a></li>
+                <li><a href="#">Living</a></li>
+                <li><a href="#">Bedroom</a></li>
+                <li><a href="#">Dining</a></li>
+                <li><a href="#">Storage</a></li>
+                <li><a href="#">Study</a></li>
+                <li><a href="#">Mattresses</a></li>
+                <li><a href="#">Decor</a></li>
+                <li><a href="#">Outdoor</a></li>
+                <li><a href="#" class="sale-link">Monsoon Sale</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- FAQ Hero Section -->
+    <section class="faq-hero-new">
+        <div class="faq-hero-container">
+            <h1 class="faq-hero-title">Help Center</h1>
+            <p class="faq-hero-subtitle">Find answers to queries, check order status, or raise complaints</p>
+            
+            <div class="faq-search-card">
+                <div class="faq-search-input-wrapper">
+                    <input type="text" id="faq-search-input" placeholder="Please Search Your Query" autocomplete="off">
+                    <button class="search-clear-btn" id="search-clear-btn" style="display: none;">&times;</button>
+                </div>
+                <button class="faq-search-btn-action" id="faq-search-submit">Search</button>
             </div>
-            <div class="trending-topics">
-                <span>Popular searches:</span>
-                <button class="trend-tag">Refund Status</button>
-                <button class="trend-tag">Track Order</button>
-                <button class="trend-tag">Return Furniture</button>
-                <button class="trend-tag">Warranty</button>
+
+            <!-- Complaint Ticket Banner Card -->
+            <div class="ticket-complaint-banner">
+                <div class="ticket-banner-content">
+                    <svg class="ticket-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <span>Want to raise a complaint or give a feedback?</span>
+                </div>
+                <button class="ws-orange-ticket-btn" id="btn-raise-ticket-banner">Ticket</button>
             </div>
         </div>
     </section>
@@ -266,9 +322,81 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="main-footer">
-        <p>&copy; 2026 Wooden Street clone demonstration. All Rights Reserved.</p>
+    <!-- 4. Deep Dark 6-Column Footer -->
+    <footer class="ws-footer">
+        <div class="footer-container-wide">
+            <div class="footer-links-grid">
+                <div class="footer-column">
+                    <h3>Our Company</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><li><a href="#">Careers</a></li></li>
+                        <li><a href="#">Customer Reviews</a></li>
+                        <li><a href="#">Wooden Street Blog</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Useful Links</h3>
+                    <ul>
+                        <li><a href="#">Custom Furniture</a></li>
+                        <li><a href="#">Experience Stores</a></li>
+                        <li><a href="#">Get a Free Catalog</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Shop By Room</h3>
+                    <ul>
+                        <li><a href="#">Living Room Furniture</a></li>
+                        <li><a href="#">Bedroom Furniture</a></li>
+                        <li><a href="#">Dining Room Furniture</a></li>
+                        <li><a href="#">Study Room Furniture</a></li>
+                        <li><a href="#">Kids Room Furniture</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Partners</h3>
+                    <ul>
+                        <li><a href="#">Franchise Opportunities</a></li>
+                        <li><a href="#">Become a Vendor</a></li>
+                        <li><a href="#">Design Partners</a></li>
+                        <li><a href="#">Hotel & Corporate Sales</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Trusted By</h3>
+                    <ul>
+                        <li><a href="#">10 Lakh+ Customers</a></li>
+                        <li><a href="#">Over 90+ Studios</a></li>
+                        <li><a href="#">Kiln Chamber Seasoning</a></li>
+                        <li><a href="#">Safe Delivery Guarantee</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column contact-column">
+                    <h3>Need Help?</h3>
+                    <p class="phone-link">📞 +91-9314444747</p>
+                    <p class="email-link">✉️ support@woodenstreet.com</p>
+                    <p class="working-hours">Available 9:00 AM - 9:00 PM</p>
+                    <div class="social-icons-row">
+                        <a href="#" class="social-icon">Insta</a>
+                        <a href="#" class="social-icon">Fb</a>
+                        <a href="#" class="social-icon">Tw</a>
+                        <a href="#" class="social-icon">Pin</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom-bar">
+                <p>&copy; 2026 Wooden Street Online Furniture Store. All Rights Reserved. (Clone Demonstration Panel)</p>
+                <div class="payment-badges">
+                    <span class="badge-pay">Visa</span>
+                    <span class="badge-pay">Mastercard</span>
+                    <span class="badge-pay">UPI</span>
+                    <span class="badge-pay">NetBanking</span>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <script src="app.js"></script>
