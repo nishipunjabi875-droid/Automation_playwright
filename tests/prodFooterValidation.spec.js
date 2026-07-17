@@ -2,7 +2,6 @@ const { test, expect } = require('@playwright/test');
 const fs = require('fs-extra');
 const path = require('path');
 
-// Helper to block analytical scripts to speed up test loading
 async function blockAnalytics(page) {
   await page.route('**/*', (route) => {
     const url = route.request().url();
@@ -23,7 +22,6 @@ async function blockAnalytics(page) {
   });
 }
 
-// Helper to normalize and resolve relative paths
 function normalizeUrl(href, baseUrl) {
   if (!href) return null;
   try {
@@ -36,18 +34,18 @@ function normalizeUrl(href, baseUrl) {
   }
 }
 
-test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
+test.describe('Production WoodenStreet Footer Links Audit Suite', () => {
 
-  test('Verify all footer links on Desktop View', async ({ page, request }) => {
+  test('Verify all footer links on Desktop View - Production', async ({ page, request }) => {
     test.setTimeout(90000);
     await blockAnalytics(page);
 
-    console.log('Navigating to Desktop view...');
+    console.log('Navigating to Production Desktop view...');
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('https://beta.teamwoodenstreet.com/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.goto('https://www.woodenstreet.com/', { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForTimeout(4000);
 
-    // Scroll to bottom to ensure footer is rendered/loaded
+    // Scroll to bottom to ensure footer is loaded
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
     });
@@ -67,10 +65,9 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
       }));
     });
 
-    console.log(`Found ${desktopLinks.length} footer links on Desktop view.`);
+    console.log(`Found ${desktopLinks.length} footer links on Production Desktop view.`);
 
-    // Filter and normalize
-    const baseUrl = 'https://beta.teamwoodenstreet.com/';
+    const baseUrl = 'https://www.woodenstreet.com/';
     const results = [];
     const checkedUrls = new Map();
 
@@ -112,7 +109,6 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
         continue;
       }
 
-      // Check if we already tested this URL to avoid duplicate HTTP requests
       if (checkedUrls.has(resolved)) {
         const cached = checkedUrls.get(resolved);
         results.push({
@@ -126,7 +122,6 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
         continue;
       }
 
-      // Perform request
       console.log(`Checking link: ${resolved} (${link.text})`);
       try {
         const response = await request.get(resolved, {
@@ -141,12 +136,10 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
         let isBroken = false;
         let error = '';
 
-        const isInternal = resolved.includes('woodenstreet.com') || resolved.includes('teamwoodenstreet.com');
+        const isInternal = resolved.includes('woodenstreet.com');
 
         if (status >= 400) {
-          // We can classify 403 on social/external pages as warnings/ignored since bots are often blocked by LinkedIn/Instagram/App Store
           if (!isInternal && (status === 403 || status === 999 || status === 401 || status === 400)) {
-            // Social media platforms often return 999 (LinkedIn) or 403/401 to crawlers
             error = `External site restricted crawler (HTTP ${status})`;
           } else {
             isBroken = true;
@@ -180,16 +173,14 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
       }
     }
 
-    // Save report
     const reportDir = path.join(__dirname, '../reports');
     await fs.ensureDir(reportDir);
-    const reportPath = path.join(reportDir, 'desktop_footer_links_report.json');
+    const reportPath = path.join(reportDir, 'prod_desktop_footer_links_report.json');
     await fs.writeJson(reportPath, results, { spaces: 2 });
-    console.log(`Saved Desktop report to ${reportPath}`);
+    console.log(`Saved Production Desktop report to ${reportPath}`);
 
-    // Print summary to console
     const broken = results.filter(r => r.isBroken);
-    console.log(`\n--- Desktop Footer Link Audit Results ---`);
+    console.log(`\n--- Production Desktop Footer Link Audit Results ---`);
     console.log(`Total Links Checked: ${results.length}`);
     console.log(`Working: ${results.length - broken.length}`);
     console.log(`Broken: ${broken.length}`);
@@ -199,27 +190,25 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
       broken.forEach(b => {
         console.log(` - [${b.text}] url: ${b.resolvedUrl} | error: ${b.error}`);
       });
-      // Do not hard fail the test, we want to see the report
     }
   });
 
-  test('Verify all footer links on Mobile View', async ({ page, request }) => {
+  test('Verify all footer links on Mobile View - Production', async ({ page, request }) => {
     test.setTimeout(90000);
     await blockAnalytics(page);
 
-    console.log('Navigating to Mobile view (iPhone 12 viewport)...');
+    console.log('Navigating to Production Mobile view (iPhone 12 viewport)...');
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('https://beta.teamwoodenstreet.com/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.goto('https://www.woodenstreet.com/', { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForTimeout(4000);
 
-    // Scroll to bottom to ensure footer is rendered/loaded
+    // Scroll to bottom
     await page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
     });
     await page.waitForTimeout(2000);
 
     // Find and expand footer accordions on mobile
-    // Accordion headers are: "OUR COMPANY", "SHOP BY ROOM", "USEFUL LINKS", "TRUSTED BY"
     const accordionHeaders = ['OUR COMPANY', 'SHOP BY ROOM', 'USEFUL LINKS', 'TRUSTED BY'];
     for (const title of accordionHeaders) {
       try {
@@ -229,28 +218,19 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
           if (isExpanded === 'false') {
             console.log(`Expanding accordion: ${title}`);
             await btn.click();
-            await page.waitForTimeout(500); // Wait for open animation
+            await page.waitForTimeout(500);
           }
         }
       } catch (e) {
-        console.log(`Failed to click/expand accordion header: ${title}`, e.message);
+        console.log(`Failed to expand accordion: ${title}`, e.message);
       }
     }
 
-    // Take screenshot after expanding
     const screenshotsDir = path.join(__dirname, '../screenshots');
     await fs.ensureDir(screenshotsDir);
-    await page.screenshot({ path: path.join(screenshotsDir, 'mobile_footer_expanded.png'), fullPage: true });
+    await page.screenshot({ path: path.join(screenshotsDir, 'prod_mobile_footer_expanded.png'), fullPage: true });
 
-    // Now extract all links in the footer area (or parent section of these accordions)
-    // The footer container class on desktop and mobile is likely style_footerSection__KdicH or similar
-    const footerSelector = '.style_footerSection__KdicH, footer, #footer, [class*="footer" i], div:has-text("OUR COMPANY")';
-    const footer = page.locator(footerSelector).first();
-    
     const mobileLinks = await page.evaluate(() => {
-      // Find the footer container or the div holding the accordions
-      // From our previous check, the buttons are held in a container with class "w-full flex flex-col gap-2"
-      // or we can just fetch all 'a' tags inside the element enclosing these accordions
       const container = document.querySelector('footer') || 
                         document.querySelector('[class*="footer"]') || 
                         document.querySelector('.w-full.flex.flex-col.gap-2')?.parentElement;
@@ -263,9 +243,9 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
       }));
     });
 
-    console.log(`Found ${mobileLinks.length} footer links on Mobile view.`);
+    console.log(`Found ${mobileLinks.length} footer links on Production Mobile view.`);
 
-    const baseUrl = 'https://beta.teamwoodenstreet.com/';
+    const baseUrl = 'https://www.woodenstreet.com/';
     const results = [];
     const checkedUrls = new Map();
 
@@ -307,7 +287,6 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
         continue;
       }
 
-      // Check cache
       if (checkedUrls.has(resolved)) {
         const cached = checkedUrls.get(resolved);
         results.push({
@@ -321,7 +300,6 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
         continue;
       }
 
-      // Perform check
       console.log(`Checking mobile link: ${resolved} (${link.text})`);
       try {
         const response = await request.get(resolved, {
@@ -336,7 +314,7 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
         let isBroken = false;
         let error = '';
 
-        const isInternal = resolved.includes('woodenstreet.com') || resolved.includes('teamwoodenstreet.com');
+        const isInternal = resolved.includes('woodenstreet.com');
 
         if (status >= 400) {
           if (!isInternal && (status === 403 || status === 999 || status === 401 || status === 400)) {
@@ -373,16 +351,14 @@ test.describe('Beta WoodenStreet Footer Links Audit Suite', () => {
       }
     }
 
-    // Save report
     const reportDir = path.join(__dirname, '../reports');
     await fs.ensureDir(reportDir);
-    const reportPath = path.join(reportDir, 'mobile_footer_links_report.json');
+    const reportPath = path.join(reportDir, 'prod_mobile_footer_links_report.json');
     await fs.writeJson(reportPath, results, { spaces: 2 });
-    console.log(`Saved Mobile report to ${reportPath}`);
+    console.log(`Saved Production Mobile report to ${reportPath}`);
 
-    // Print summary to console
     const broken = results.filter(r => r.isBroken);
-    console.log(`\n--- Mobile Footer Link Audit Results ---`);
+    console.log(`\n--- Production Mobile Footer Link Audit Results ---`);
     console.log(`Total Links Checked: ${results.length}`);
     console.log(`Working: ${results.length - broken.length}`);
     console.log(`Broken: ${broken.length}`);
