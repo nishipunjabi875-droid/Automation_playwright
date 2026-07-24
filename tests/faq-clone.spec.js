@@ -22,12 +22,12 @@ test.describe('WoodenStreet Help Center FAQ Clone UI Tests', () => {
     expect(bgVal).toBe('rgb(249, 118, 58)');
   });
 
-  test('Verify 3-Column FAQ Layout and Navigation', async ({ page }) => {
+  test('Verify 2-Column FAQ Layout and Navigation', async ({ page }) => {
     // 1. Check sidebar categories are rendered
     const categoriesList = page.locator('.category-item');
     await expect(categoriesList).toHaveCount(5);
 
-    // 2. Select Payments & Refunds category
+    // 2. Select Payment & Invoice category
     const paymentCategory = page.locator('.category-item:has-text("Payment & Invoice")');
     await paymentCategory.click();
     await expect(paymentCategory).toHaveClass(/active/);
@@ -36,19 +36,16 @@ test.describe('WoodenStreet Help Center FAQ Clone UI Tests', () => {
     const activeTitle = page.locator('#active-category-title');
     await expect(activeTitle).toHaveText('Payment & Invoice');
 
-    // 4. Click a question to open the answer in pane 3
-    const questionItem = page.locator('.question-item').first();
-    await questionItem.click();
+    // 4. Click an accordion header to expand it
+    const accordionItem = page.locator('.accordion-item').first();
+    const accordionHeader = accordionItem.locator('.accordion-header');
+    await accordionHeader.click();
 
-    // Confirm right answer pane is loaded and displays contents
-    const answerCard = page.locator('#answer-content-card-element');
-    await expect(answerCard).toBeVisible();
-    
-    const answerTitle = page.locator('#displayed-answer-title');
-    await expect(answerTitle).not.toBeEmpty();
-    
-    const answerBody = page.locator('#displayed-answer-body');
-    await expect(answerBody).toContainText('EMI');
+    // Confirm accordion expands and displays answer content
+    await expect(accordionItem).toHaveClass(/expanded/);
+    const accordionContent = accordionItem.locator('.accordion-content');
+    await expect(accordionContent).toBeVisible();
+    await expect(accordionContent).toContainText('EMI');
   });
 
   test('Verify Live Search Filters Questions', async ({ page }) => {

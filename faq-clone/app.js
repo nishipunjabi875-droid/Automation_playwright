@@ -245,63 +245,99 @@ function selectCategory(idx) {
     
     renderSidebar();
     renderQuestionsList();
-    clearAnswerPanel();
 }
 
 /**
- * Render the questions under selected category or search results in the Middle column.
+ * Render the questions under selected category or search results in the Right column as accordions.
  */
 function renderQuestionsList(customQuestions = null) {
     if (!DOM.questionList) return;
     DOM.questionList.innerHTML = "";
     
     const list = customQuestions || FAQ_DATABASE[appState.currentCategoryIdx].questions;
+    const catIdx = appState.currentCategoryIdx;
     
     if (customQuestions) {
         DOM.categoryTitle.textContent = "Search Results";
         DOM.questionCount.textContent = `${list.length} questions found`;
     } else {
-        DOM.categoryTitle.textContent = FAQ_DATABASE[appState.currentCategoryIdx].title;
+        DOM.categoryTitle.textContent = FAQ_DATABASE[catIdx].title;
         DOM.questionCount.textContent = `${list.length} questions`;
     }
     
     if (list.length === 0) {
         DOM.questionList.innerHTML = `
             <li class="no-results-msg" style="padding: 30px; text-align: center; color: var(--text-muted); font-size: 13.5px;">
-                No questions found. Try general keywords like "refund", "delivery" or "wood finish".
+                No questions found. Try general keywords like "refund", "delivery" or "warranty".
             </li>
         `;
         return;
     }
     
     list.forEach((item, idx) => {
+        // Resolve original indices in case search filter lists are active
+        let originalCatIdx = catIdx;
+        let originalQIdx = idx;
+        if (customQuestions) {
+            for (let c = 0; c < FAQ_DATABASE.length; c++) {
+                const foundIdx = FAQ_DATABASE[c].questions.findIndex(qObj => qObj.q === item.q);
+                if (foundIdx !== -1) {
+                    originalCatIdx = c;
+                    originalQIdx = foundIdx;
+                    break;
+                }
+            }
+        }
+
         const itemEl = document.createElement("li");
-        itemEl.className = `question-item ${idx === appState.currentQuestionIdx ? "active" : ""}`;
-        itemEl.setAttribute("role", "button");
-        itemEl.setAttribute("tabindex", "0");
+        itemEl.className = "accordion-item";
         
-        // Highlight terms if search is active
         const qTitle = highlightSearchTerms(item.q, appState.searchQuery);
+        const aBody = highlightSearchTerms(item.a, appState.searchQuery);
+        
+        const feedbackKey = `${originalCatIdx}-${originalQIdx}`;
+        const hasRated = appState.feedbackStates[feedbackKey];
         
         itemEl.innerHTML = `
-            <span>${qTitle}</span>
-            <svg class="question-chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <div class="accordion-header" role="button" aria-expanded="false" tabindex="0">
+                <span>${qTitle}</span>
+                <svg class="accordion-chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+            <div class="accordion-content">
+                <div class="accordion-body-text">${aBody}</div>
+                <div class="answer-feedback-area">
+                    <span>Was this answer helpful?</span>
+                    <div class="feedback-buttons" style="${hasRated ? 'display: none;' : 'display: flex;'}">
+                        <button class="btn-feedback" onclick="rateAccordion(${originalCatIdx}, ${originalQIdx}, true, this)">👍 Yes</button>
+                        <button class="btn-feedback" onclick="rateAccordion(${originalCatIdx}, ${originalQIdx}, false, this)">👎 No</button>
+                    </div>
+                    <span class="feedback-success-msg" style="${hasRated ? 'display: block;' : 'display: none;'}">
+                        ${hasRated === 'liked' ? 'Glad to help! Thanks for rating.' : 'Thanks for reporting. We will update this answer.'}
+                    </span>
+                </div>
+            </div>
         `;
         
-        // Selection handlers
-        const select = () => {
-            appState.currentQuestionIdx = idx;
-            const siblings = DOM.questionList.querySelectorAll(".question-item");
-            siblings.forEach(el => el.classList.remove("active"));
-            itemEl.classList.add("active");
-            displayAnswer(item);
+        const header = itemEl.querySelector(".accordion-header");
+        
+        const toggle = () => {
+            const isExpanded = itemEl.classList.contains("expanded");
+            if (isExpanded) {
+                itemEl.classList.remove("expanded");
+                header.setAttribute("aria-expanded", "false");
+            } else {
+                itemEl.classList.add("expanded");
+                header.setAttribute("aria-expanded", "true");
+            }
         };
         
-        itemEl.addEventListener("click", select);
-        itemEl.addEventListener("keydown", (e) => {
+        header.addEventListener("click", toggle);
+        header.addEventListener("keydown", (e) => {
             if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
-                select();
+                toggle();
             }
         });
         
@@ -309,39 +345,23 @@ function renderQuestionsList(customQuestions = null) {
     });
 }
 
-/**
- * Render selected Answer on the Right pane.
- */
-function displayAnswer(item) {
-    if (!DOM.contentCard) return;
-    DOM.placeholder.style.display = "none";
-    DOM.contentCard.style.display = "flex";
+// Global Accordion Rating callback
+window.rateAccordion = function(catIdx, qIdx, liked, buttonEl) {
+    const parentFeedback = buttonEl.closest('.answer-feedback-area');
+    const buttonsRow = parentFeedback.querySelector('.feedback-buttons');
+    const successMsg = parentFeedback.querySelector('.feedback-success-msg');
     
-    const highlightedQ = highlightSearchTerms(item.q, appState.searchQuery);
-    const highlightedA = highlightSearchTerms(item.a, appState.searchQuery);
+    const key = `${catIdx}-${qIdx}`;
+    appState.feedbackStates[key] = liked ? "liked" : "disliked";
     
-    DOM.answerTitle.innerHTML = highlightedQ;
-    DOM.answerBody.innerHTML = highlightedA;
-    
-    // Reset feedback UI
-    const feedbackKey = `${appState.currentCategoryIdx}-${appState.currentQuestionIdx}`;
-    if (appState.feedbackStates[feedbackKey]) {
-        DOM.feedbackYes.style.display = "none";
-        DOM.feedbackNo.style.display = "none";
-        DOM.feedbackSuccess.style.display = "block";
-        DOM.feedbackSuccess.textContent = "Thank you for rating this answer!";
-    } else {
-        DOM.feedbackYes.style.display = "flex";
-        DOM.feedbackNo.style.display = "flex";
-        DOM.feedbackSuccess.style.display = "none";
+    if (buttonsRow) buttonsRow.style.display = "none";
+    if (successMsg) {
+        successMsg.style.display = "block";
+        successMsg.textContent = liked 
+            ? "Glad to help! Thanks for rating." 
+            : "Thanks for reporting. We will update this answer.";
     }
-}
-
-function clearAnswerPanel() {
-    if (!DOM.contentCard) return;
-    DOM.placeholder.style.display = "flex";
-    DOM.contentCard.style.display = "none";
-}
+};
 
 // Search Inputs
 if (DOM.searchInput) {
@@ -365,12 +385,10 @@ if (DOM.searchInput) {
             });
             appState.currentQuestionIdx = null;
             renderQuestionsList(matchingQuestions);
-            clearAnswerPanel();
         } else {
             if (DOM.searchClearBtn) DOM.searchClearBtn.style.display = "none";
             renderSidebar();
             renderQuestionsList();
-            clearAnswerPanel();
         }
     });
 }
@@ -382,7 +400,6 @@ if (DOM.searchClearBtn) {
         DOM.searchClearBtn.style.display = "none";
         renderSidebar();
         renderQuestionsList();
-        clearAnswerPanel();
     });
 }
 
@@ -396,24 +413,6 @@ document.querySelectorAll(".trend-tag").forEach(tag => {
         }
     });
 });
-
-// Feedback handlers
-if (DOM.feedbackYes && DOM.feedbackNo) {
-    DOM.feedbackYes.addEventListener("click", () => recordFeedback(true));
-    DOM.feedbackNo.addEventListener("click", () => recordFeedback(false));
-}
-
-function recordFeedback(liked) {
-    const key = `${appState.currentCategoryIdx}-${appState.currentQuestionIdx}`;
-    appState.feedbackStates[key] = liked ? "liked" : "disliked";
-    
-    DOM.feedbackYes.style.display = "none";
-    DOM.feedbackNo.style.display = "none";
-    DOM.feedbackSuccess.style.display = "block";
-    DOM.feedbackSuccess.textContent = liked 
-        ? "Glad to help! Thanks for rating." 
-        : "Thanks for reporting. We will update this answer.";
-}
 
 // ==========================================
 // 4. Custom Support Modals (Ticket / Tracker)

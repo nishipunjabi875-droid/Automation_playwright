@@ -474,17 +474,180 @@ class Reporter {
     .screenshot-container {
       border: 2px solid var(--border-color);
       border-radius: 12px;
-      overflow: hidden;
+      height: 650px; /* Fixed viewport height for visual alignment */
+      overflow-y: auto; /* Vertically scrollable */
+      overflow-x: hidden;
       position: relative;
       max-width: 100%;
-      background: #000;
+      background: #0d1117;
       box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.2) transparent;
+      cursor: zoom-in; /* Indicate clicking to expand */
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .screenshot-container:hover {
+      border-color: var(--neon-blue);
+      box-shadow: 0 8px 35px rgba(0, 242, 254, 0.15);
+    }
+
+    .screenshot-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .screenshot-container::-webkit-scrollbar-thumb {
+      background-color: rgba(255,255,255,0.2);
+      border-radius: 3px;
     }
 
     .screenshot-img {
       display: block;
       width: 100%;
       height: auto;
+    }
+
+    /* Toggle switch styles */
+    .switch input:checked + .slider {
+      background-color: var(--neon-blue);
+    }
+    .switch .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    .switch input:checked + .slider:before {
+      transform: translateX(16px);
+    }
+
+    /* Size Button styles */
+    .size-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .size-btn:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+    }
+    .size-btn.active {
+      background: var(--blue-glow) !important;
+      color: var(--neon-blue) !important;
+      box-shadow: 0 0 8px rgba(0, 242, 254, 0.15);
+    }
+
+    /* Lightbox Modal */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(5, 8, 16, 0.95);
+      backdrop-filter: blur(8px);
+      flex-direction: column;
+    }
+
+    .lightbox-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(11, 15, 25, 0.95);
+    }
+
+    .lightbox-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .lightbox-tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .lightbox-tab-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .lightbox-tab-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    .lightbox-tab-btn.active {
+      background: var(--blue-glow);
+      color: var(--neon-blue);
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+    }
+
+    .lightbox-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.8rem;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s, color 0.2s;
+      line-height: 1;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    .lightbox-body {
+      flex-grow: 1;
+      overflow: auto;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .lightbox-content {
+      max-width: 1280px;
+      width: 100%;
+      background: #0b0f19;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      display: block;
+    }
+    
+    .lightbox-modal.mobile-view .lightbox-content {
+      max-width: 450px;
     }
 
     /* Table View */
@@ -732,23 +895,37 @@ class Reporter {
           </div>
         </div>
 
+        <!-- Screenshot Toolbar -->
+        <div id="screenshotToolbar" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1.25rem; margin-bottom: 1rem;">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+            <span style="color: var(--text-muted);">Sync Scrolling:</span>
+            <label class="switch" style="position: relative; display: inline-block; width: 36px; height: 20px;">
+              <input type="checkbox" id="syncScrollToggle" checked style="opacity: 0; width: 0; height: 0;">
+              <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .3s; border-radius: 20px;"></span>
+            </label>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            💡 <em>Click any screenshot to expand to full size for pixel-perfect detail comparison.</em>
+          </div>
+        </div>
+
         <!-- Highlights Pane - Side-by-Side Comparative View -->
         <div class="highlights-view" id="highlightsView">
           <div class="visual-column">
             <div style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 0.5px;">Reference Baseline (Last Capture)</div>
-            <div class="screenshot-container">
+            <div class="screenshot-container" onclick="openLightbox('baseline')">
               <img id="baselineScreenshot" class="screenshot-img" src="" alt="Reference Baseline" onerror="this.src='https://placehold.co/600x400?text=No+Baseline+Image'">
             </div>
           </div>
           <div class="visual-column" id="previousColumn" style="display: none;">
             <div style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; color: var(--neon-orange); margin-bottom: 8px; letter-spacing: 0.5px;">Previous Run View</div>
-            <div class="screenshot-container">
+            <div class="screenshot-container" onclick="openLightbox('previous')">
               <img id="previousScreenshot" class="screenshot-img" src="" alt="Previous Run" onerror="this.src='https://placehold.co/600x400?text=No+Previous+Image'">
             </div>
           </div>
           <div class="visual-column">
             <div style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; color: var(--neon-blue); margin-bottom: 8px; letter-spacing: 0.5px;">Current Build View (Today's Capture)</div>
-            <div class="screenshot-container">
+            <div class="screenshot-container" onclick="openLightbox('current')">
               <img id="pageScreenshot" class="screenshot-img" src="" alt="Today's Highlights" onerror="this.src='https://placehold.co/600x400?text=No+Current+Image'">
             </div>
           </div>
@@ -778,6 +955,22 @@ class Reporter {
     </div>
   </div>
 
+  <!-- Lightbox Modal -->
+  <div id="lightboxModal" class="lightbox-modal">
+    <div class="lightbox-header">
+      <div class="lightbox-title" id="lightboxTitle">Screenshot Details</div>
+      <div class="lightbox-tabs">
+        <button class="lightbox-tab-btn" id="tabBaseline" onclick="selectLightboxView('baseline')">Baseline</button>
+        <button class="lightbox-tab-btn" id="tabPrevious" onclick="selectLightboxView('previous')">Previous</button>
+        <button class="lightbox-tab-btn" id="tabCurrent" onclick="selectLightboxView('current')">Current Run</button>
+      </div>
+      <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    </div>
+    <div class="lightbox-body">
+      <img id="lightboxImg" class="lightbox-content" src="" alt="Expanded View">
+    </div>
+  </div>
+
   <footer class="dashboard-footer">
     <p>Component Audit Automation Framework &copy; 2026. Custom Premium Verification Report.</p>
   </footer>
@@ -788,10 +981,12 @@ class Reporter {
     let activePageId = Object.keys(data)[0];
     let viewMode = 'highlights'; // 'highlights' | 'table'
     let statusFilter = 'ALL';
+    let currentLightboxView = 'current'; // 'baseline' | 'previous' | 'current'
     
     function init() {
       renderSidebar();
       loadPage(activePageId);
+      setupSyncScrolling();
     }
 
     function renderSidebar() {
@@ -861,6 +1056,16 @@ class Reporter {
 
       renderTable();
       setViewMode(viewMode);
+      
+      // Re-apply current size selection
+      const activeSizeBtn = document.querySelector('.size-btn.active');
+      if (activeSizeBtn) {
+        const text = activeSizeBtn.innerText.toLowerCase();
+        if (text.includes('fit') || text.includes('300')) setScreenshotSize('small');
+        else if (text.includes('medium')) setScreenshotSize('medium');
+        else if (text.includes('large')) setScreenshotSize('large');
+        else if (text.includes('full')) setScreenshotSize('full');
+      }
     }
 
     function setViewMode(mode) {
@@ -1047,6 +1252,154 @@ class Reporter {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+    }
+
+    // Setup Scroll Synchronization across columns
+    function setupSyncScrolling() {
+      const containers = [
+        document.getElementById('baselineScreenshot').parentElement,
+        document.getElementById('previousScreenshot').parentElement,
+        document.getElementById('pageScreenshot').parentElement
+      ];
+      
+      let activeScrollContainer = null;
+      
+      containers.forEach(container => {
+        if (!container) return;
+        
+        container.addEventListener('mouseenter', () => {
+          activeScrollContainer = container;
+        });
+        
+        container.addEventListener('scroll', () => {
+          const syncEnabled = document.getElementById('syncScrollToggle').checked;
+          if (!syncEnabled || activeScrollContainer !== container) return;
+          
+          const scrollTop = container.scrollTop;
+          const scrollHeight = container.scrollHeight - container.clientHeight;
+          const scrollPercent = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+          
+          containers.forEach(other => {
+            if (other === container || !other) return;
+            const otherScrollHeight = other.scrollHeight - other.clientHeight;
+            other.scrollTop = otherScrollHeight * scrollPercent;
+          });
+        });
+      });
+    }
+
+    // Set display width of screenshots in columns
+    function setScreenshotSize(size) {
+      document.querySelectorAll('.size-btn').forEach(btn => {
+        const text = btn.innerText.toLowerCase();
+        if (size === 'small' && (text.includes('fit') || text.includes('300'))) {
+          btn.classList.add('active');
+        } else if (size === 'medium' && text.includes('medium')) {
+          btn.classList.add('active');
+        } else if (size === 'large' && text.includes('large')) {
+          btn.classList.add('active');
+        } else if (size === 'full' && text.includes('full')) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      const highlightsView = document.getElementById('highlightsView');
+      const hasPrev = previousData && previousData[activePageId];
+      const colCount = hasPrev ? 3 : 2;
+      
+      if (size === 'small') {
+        highlightsView.style.gridTemplateColumns = 'repeat(' + colCount + ', minmax(280px, 1fr))';
+        highlightsView.style.maxWidth = '100%';
+        highlightsView.style.overflowX = 'hidden';
+      } else if (size === 'medium') {
+        highlightsView.style.gridTemplateColumns = 'repeat(' + colCount + ', 500px)';
+        highlightsView.style.maxWidth = '100%';
+        highlightsView.style.overflowX = 'auto';
+      } else if (size === 'large') {
+        highlightsView.style.gridTemplateColumns = 'repeat(' + colCount + ', 750px)';
+        highlightsView.style.maxWidth = '100%';
+        highlightsView.style.overflowX = 'auto';
+      } else if (size === 'full') {
+        highlightsView.style.gridTemplateColumns = '1fr';
+        highlightsView.style.maxWidth = '1000px';
+        highlightsView.style.margin = '0 auto';
+        highlightsView.style.overflowX = 'hidden';
+      }
+    }
+
+    // Lightbox modal functions for full scale view
+    function openLightbox(viewType) {
+      currentLightboxView = viewType;
+      const modal = document.getElementById('lightboxModal');
+      
+      if (activePageId.includes('mobile')) {
+        modal.classList.add('mobile-view');
+      } else {
+        modal.classList.remove('mobile-view');
+      }
+      
+      modal.style.display = 'flex';
+      selectLightboxView(viewType);
+      
+      // Align scroll height to small viewport scroll height percentage
+      let sourceContainer = null;
+      if (viewType === 'baseline') sourceContainer = document.getElementById('baselineScreenshot').parentElement;
+      else if (viewType === 'previous') sourceContainer = document.getElementById('previousScreenshot').parentElement;
+      else sourceContainer = document.getElementById('pageScreenshot').parentElement;
+      
+      if (sourceContainer) {
+        const scrollTop = sourceContainer.scrollTop;
+        const scrollHeight = sourceContainer.scrollHeight - sourceContainer.clientHeight;
+        const percent = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+        
+        const img = document.getElementById('lightboxImg');
+        const scrollBody = document.querySelector('.lightbox-body');
+        
+        const setScroll = () => {
+          const targetScrollHeight = scrollBody.scrollHeight - scrollBody.clientHeight;
+          scrollBody.scrollTop = targetScrollHeight * percent;
+        };
+        
+        if (img.complete) {
+          setTimeout(setScroll, 100);
+        } else {
+          img.onload = () => {
+            setTimeout(setScroll, 100);
+            img.onload = null;
+          };
+        }
+      }
+    }
+    
+    function closeLightbox() {
+      document.getElementById('lightboxModal').style.display = 'none';
+    }
+    
+    function selectLightboxView(viewType) {
+      currentLightboxView = viewType;
+      
+      document.getElementById('tabBaseline').classList.toggle('active', viewType === 'baseline');
+      document.getElementById('tabPrevious').classList.toggle('active', viewType === 'previous');
+      document.getElementById('tabCurrent').classList.toggle('active', viewType === 'current');
+      
+      const hasPrev = previousData && previousData[activePageId];
+      document.getElementById('tabPrevious').style.display = hasPrev ? 'block' : 'none';
+      
+      const img = document.getElementById('lightboxImg');
+      const pageId = activePageId;
+      
+      if (viewType === 'baseline') {
+        img.src = './screenshots/' + pageId + '_baseline.png';
+        document.getElementById('lightboxTitle').innerText = 'Reference Baseline - ' + data[pageId].name;
+      } else if (viewType === 'previous') {
+        img.src = './screenshots/' + pageId + '_previous.png';
+        document.getElementById('lightboxTitle').innerText = 'Previous Run View - ' + data[pageId].name;
+      } else {
+        img.src = './screenshots/' + pageId + '_current.png';
+        document.getElementById('lightboxTitle').innerText = "Today's Highlights - " + data[pageId].name;
+      }
     }
 
     window.onload = init;

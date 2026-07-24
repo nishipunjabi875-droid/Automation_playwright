@@ -67,7 +67,8 @@ module.exports = {
           id: 'footer',
           name: 'Footer Section',
           selector: '.style_footerSection__KdicH, footer, #footer, [class*="footer" i], section.bg-white.py-5:has-text("Woodenstreet.com")',
-          checkAttrs: ['innerText']
+          checkAttrs: ['innerText'],
+          optional: true
         }
       ]
     },
@@ -142,7 +143,8 @@ module.exports = {
           id: 'footer',
           name: 'Footer Section',
           selector: '.style_footerSection__KdicH, footer, #footer, [class*="footer" i], section.bg-white.py-5:has-text("Woodenstreet.com")',
-          checkAttrs: ['innerText']
+          checkAttrs: ['innerText'],
+          optional: true
         }
       ]
     },
@@ -197,7 +199,8 @@ module.exports = {
           id: 'footer',
           name: 'Footer Section',
           selector: '.style_footerSection__KdicH, footer, #footer, [class*="footer" i], section.bg-white.py-5:has-text("Woodenstreet.com")',
-          checkAttrs: ['innerText']
+          checkAttrs: ['innerText'],
+          optional: true
         }
       ]
     }

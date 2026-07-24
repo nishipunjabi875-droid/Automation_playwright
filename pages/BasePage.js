@@ -107,12 +107,12 @@ class BasePage {
   async scrollToBottomAndTop() {
     try {
       await this.page.evaluate(async () => {
-        window.scrollTo(0, document.body.scrollHeight / 2);
+        window.scrollBy(0, 1000);
         await new Promise(r => setTimeout(r, 600));
-        window.scrollTo(0, document.body.scrollHeight);
-        await new Promise(r => setTimeout(r, 1000));
+        window.scrollBy(0, 1000);
+        await new Promise(r => setTimeout(r, 600));
         window.scrollTo(0, 0);
-        await new Promise(r => setTimeout(r, 600));
+        await new Promise(r => setTimeout(r, 500));
       });
     } catch (e) {
       // Ignore

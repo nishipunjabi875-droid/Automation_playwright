@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive FAQ Prototype | Wooden Street Support</title>
+    <title>Help Center | Wooden Street FAQ & Support Assistant</title>
     <!-- Premium Google Fonts matching Wooden Street typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +34,7 @@
             <!-- Brand Logo -->
             <a href="index.html" class="ws-logo">
                 <span class="logo-txt-orange">wooden</span><span class="logo-txt-black">street</span>
-                <span style="font-size: 11px; background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle;">PROTOTYPE</span>
+                <span style="font-size: 11px; background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle;">HELP CENTER</span>
             </a>
 
             <!-- Central Product Search -->
@@ -157,59 +157,28 @@
         </div>
     </section>
 
-    <!-- Main 3-Column FAQ Section -->
+    <!-- Main 2-Column FAQ Section (Consistent with Live Wooden Street Layout) -->
     <section class="faq-workspace-section">
         <div class="section-container">
-            <div class="faq-container-3col">
+            <div class="faq-container-2col">
                 <!-- Column 1: Categories Sidebar -->
                 <aside class="faq-sidebar">
-                    <h2 class="sidebar-title">Categories</h2>
+                    <h2 class="sidebar-title">General FAQs</h2>
                     <ul class="category-list" id="category-list-element">
                         <!-- Rendered Dynamically -->
                     </ul>
                 </aside>
 
-                <!-- Column 2: Question List Pane -->
+                <!-- Column 2: Accordion List Pane -->
                 <main class="faq-questions-pane">
                     <div class="pane-header">
-                        <h2 id="active-category-title">Order Status & Tracking</h2>
-                        <span class="question-count-badge" id="active-question-count">5 questions</span>
+                        <h2 id="active-category-title">Order Tracking & Delivery</h2>
+                        <span class="question-count-badge" id="active-question-count">17 questions</span>
                     </div>
-                    <ul class="question-list" id="question-list-element">
-                        <!-- Rendered Dynamically -->
+                    <ul class="accordion-list" id="question-list-element">
+                        <!-- Rendered Dynamically with expanding accordion panels -->
                     </ul>
                 </main>
-
-                <!-- Column 3: Answer Display Pane -->
-                <section class="faq-answer-pane" id="faq-answer-pane-element">
-                    <div class="answer-placeholder" id="answer-placeholder-element">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 16v-4"/><path d="M12 8h.01"/><circle cx="12" cy="12" r="10"/>
-                        </svg>
-                        <h3>Select a Question</h3>
-                        <p>Click any question from the list on the left to read the detailed support answer.</p>
-                    </div>
-                    <div class="answer-content-card" id="answer-content-card-element" style="display: none;">
-                        <h2 class="answer-title" id="displayed-answer-title">How do I track my order?</h2>
-                        <div class="answer-body-markdown" id="displayed-answer-body">
-                            <!-- Answer text goes here -->
-                        </div>
-                        <div class="answer-feedback-area">
-                            <span>Was this answer helpful?</span>
-                            <div class="feedback-buttons">
-                                <button class="btn-feedback" id="btn-feedback-yes">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
-                                    Yes
-                                </button>
-                                <button class="btn-feedback" id="btn-feedback-no">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm12-5h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>
-                                    No
-                                </button>
-                            </div>
-                            <span class="feedback-success-msg" id="feedback-success-msg" style="display: none;">Thank you for your feedback!</span>
-                        </div>
-                    </div>
-                </section>
             </div>
         </div>
     </section>

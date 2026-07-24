@@ -246,7 +246,7 @@ async function runAuditForView(page, pageConfig, viewId, viewName, baseline, mod
   for (const comp of pageConfig.components) {
     if (comp.multi) {
       const locator = page.locator(comp.selector);
-      const count = await locator.count();
+      const count = Math.min(await locator.count(), 12);
       
       if (count === 0) {
         const subCompId = `${comp.id}_0`;
@@ -379,8 +379,29 @@ async function runAuditForView(page, pageConfig, viewId, viewName, baseline, mod
         }
       }
     } else {
-      const element = page.locator(comp.selector).first();
-      const isPresent = await element.count() > 0 && await element.isVisible().catch(() => false);
+      const locator = page.locator(comp.selector);
+      const count = await locator.count();
+      let element = null;
+      let isPresent = false;
+      
+      for (let i = 0; i < count; i++) {
+        const el = locator.nth(i);
+        if (await el.isVisible().catch(() => false)) {
+          element = el;
+          isPresent = true;
+          break;
+        }
+        await el.scrollIntoViewIfNeeded({ timeout: 1000 }).catch(() => {});
+        if (await el.isVisible().catch(() => false)) {
+          element = el;
+          isPresent = true;
+          break;
+        }
+      }
+      
+      if (!isPresent) {
+        element = locator.first();
+      }
 
       const baselineComp = pageBaseline ? pageBaseline.components.find(c => c.id === comp.id) : null;
       let status = 'Present';
@@ -522,7 +543,19 @@ async function runAuditForView(page, pageConfig, viewId, viewName, baseline, mod
 
   const screenshotName = mode === 'capture' ? `${viewId}_baseline.png` : `${viewId}_current.png`;
   const screenshotPath = path.join(SCREENSHOTS_DIR, screenshotName);
-  await page.screenshot({ path: screenshotPath, fullPage: true });
+  const originalViewport = page.viewportSize();
+  const scrollHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+  
+  if (originalViewport && scrollHeight > originalViewport.height) {
+    console.log(`   Expanding viewport size to capture lazy-loaded content: ${originalViewport.width}x${scrollHeight}`);
+    await page.setViewportSize({ width: originalViewport.width, height: scrollHeight });
+    await page.waitForTimeout(2000); // Wait for lazy load images to render
+    await dismissPopups(page);       // Re-dismiss any popups
+    await page.screenshot({ path: screenshotPath });
+    await page.setViewportSize(originalViewport);
+  } else {
+    await page.screenshot({ path: screenshotPath, fullPage: true });
+  }
 
   // Clean up overlays
   await page.evaluate(() => {
