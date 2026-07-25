@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Testimonial Card</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .testimonial-card {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .testimonial-card__image {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .testimonial-card__body {
+    padding: 20px 24px 28px;
+  }
+
+  .testimonial-card__name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+
+  .testimonial-card__location {
+    font-size: 15px;
+    color: #777777;
+    margin-bottom: 14px;
+  }
+
+  .testimonial-card__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e8e8e8;
+    margin-bottom: 18px;
+  }
+
+  .testimonial-card__stars {
+    display: flex;
+    gap: 3px;
+  }
+
+  .testimonial-card__star {
+    width: 22px;
+    height: 22px;
+    fill: #ee8630;
+  }
+
+  .testimonial-card__date {
+    font-size: 15px;
+    color: #444444;
+    font-weight: 400;
+  }
+
+  .testimonial-card__text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333333;
+  }
+</style>
+</head>
+<body>
+
+  <div class="testimonial-card">
+    <!-- Furniture Image -->
+    <img
+      src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&h=600&fit=crop"
+      alt="Modern curved sofa in a stylish living room"
+      class="testimonial-card__image"
+    />
+
+    <!-- Card Body -->
+    <div class="testimonial-card__body">
+      <!-- Name -->
+      <h3 class="testimonial-card__name">Ritesh Kumar Gupta</h3>
+      <!-- Location -->
+      <p class="testimonial-card__location">Hyderabad</p>
+
+      <!-- Stars + Date Row -->
+      <div class="testimonial-card__meta">
+        <div class="testimonial-card__stars">
+          <!-- 4 filled stars -->
+          <svg class="testimonial-card__star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="testimonial-card__star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="testimonial-card__star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="testimonial-card__star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <span class="testimonial-card__date">December 19, 2025</span>
+      </div>
+
+      <!-- Testimonial Text -->
+      <p class="testimonial-card__text">
+        Mr. Manish Gadhvi, CEO of Funds India in B2B Design, was looking for office furniture that doesn't give the traditional boring vibes. And here, he got the desired fun-filled, vibrant office furniture. Impressed
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>
