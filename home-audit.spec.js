@@ -545,19 +545,7 @@ async function runAuditForView(page, pageConfig, viewId, viewName, baseline, mod
 
   const screenshotName = mode === 'capture' ? `${viewId}_baseline.png` : `${viewId}_current.png`;
   const screenshotPath = path.join(SCREENSHOTS_DIR, screenshotName);
-  const originalViewport = page.viewportSize();
-  const scrollHeight = await page.evaluate(() => document.documentElement.scrollHeight);
-  
-  if (originalViewport && scrollHeight > originalViewport.height) {
-    console.log(`   Expanding viewport size to capture lazy-loaded content: ${originalViewport.width}x${scrollHeight}`);
-    await page.setViewportSize({ width: originalViewport.width, height: scrollHeight });
-    await page.waitForTimeout(2000); // Wait for lazy load images to render
-    await dismissPopups(page);       // Re-dismiss any popups
-    await page.screenshot({ path: screenshotPath });
-    await page.setViewportSize(originalViewport);
-  } else {
-    await page.screenshot({ path: screenshotPath, fullPage: true });
-  }
+  await page.screenshot({ path: screenshotPath, fullPage: true });
 
   // Clean up overlays
   await page.evaluate(() => {
