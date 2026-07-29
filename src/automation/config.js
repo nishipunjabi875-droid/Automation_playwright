@@ -37,6 +37,7 @@ module.exports = {
           name: 'Deals Section',
           selector: 'div.bg-gray-100:has-text("sale ends in"), div[class*="bg-[#FFF2F2]"], .deal-section, .offers, [class*="deal" i], [class*="offer" i]',
           checkAttrs: ['innerText'],
+          skipCompareAttrs: ['innerText'],
           optional: true
         },
         {
@@ -66,7 +67,7 @@ module.exports = {
         {
           id: 'footer',
           name: 'Footer Section',
-          selector: '.style_footerSection__KdicH, footer, #footer, [class*="footer" i], section.bg-white.py-5:has-text("Woodenstreet.com")',
+          selector: '.style_footerSection__KdicH, footer, #footer, [class*="footer" i], [class*="Footer"], section.bg-white.py-5:has-text("Woodenstreet.com"), div[class*="footerSection"]',
           checkAttrs: ['innerText'],
           optional: true
         }

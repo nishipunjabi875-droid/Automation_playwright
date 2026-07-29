@@ -170,11 +170,13 @@ module.exports = async () => {
 
   // Clean up the temporary results files and directory
   try {
-    const files = fs.readdirSync(tempDir);
-    for (const file of files) {
-      fs.unlinkSync(path.join(tempDir, file));
+    if (fs.existsSync(tempDir)) {
+      const files = fs.readdirSync(tempDir);
+      for (const file of files) {
+        fs.unlinkSync(path.join(tempDir, file));
+      }
+      fs.rmdirSync(tempDir);
     }
-    fs.rmdirSync(tempDir);
   } catch (err) {
     console.error(`Cleanup error: ${err.message}`);
   }

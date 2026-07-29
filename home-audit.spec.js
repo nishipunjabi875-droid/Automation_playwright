@@ -326,7 +326,8 @@ async function runAuditForView(page, pageConfig, viewId, viewName, baseline, mod
                 const currentChanges = {};
                 let isChanged = false;
 
-                const keysToCompare = Object.keys(attributes);
+                const skipAttrs = comp.skipCompareAttrs || [];
+                const keysToCompare = Object.keys(attributes).filter(k => !skipAttrs.includes(k));
                 for (const key of keysToCompare) {
                   const oldVal = baselineComp.attributes[key] || '';
                   const newVal = attributes[key] || '';
@@ -447,7 +448,8 @@ async function runAuditForView(page, pageConfig, viewId, viewName, baseline, mod
             const currentChanges = {};
             let isChanged = false;
 
-            const keysToCompare = Object.keys(attributes);
+            const skipAttrs = comp.skipCompareAttrs || [];
+            const keysToCompare = Object.keys(attributes).filter(k => !skipAttrs.includes(k));
             for (const key of keysToCompare) {
               const oldVal = baselineComp.attributes[key] || '';
               const newVal = attributes[key] || '';
