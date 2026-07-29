@@ -11,16 +11,16 @@ const xlsx = require("xlsx");
 // Update these values for each new sale or if the input file changes.
 const CONFIG = {
   // Input and Output
-  inputFile: process.env.INPUT_FILE || "./sale_urls.csv", // Excel or CSV file containing URLs
+  inputFile: process.env.INPUT_FILE || "./sale_urls_beta.csv", // Excel or CSV file containing URLs
   urlColumnName: "Information Pages Links", // Column header containing the URLs
-  baseUrl: process.env.BASE_URL || "https://www.woodenstreet.com/", // Base domain
+  baseUrl: process.env.BASE_URL || "https://beta.teamwoodenstreet.com/", // Base domain
   outputDir: "./results",
   screenshotsDir: "./results/screenshots",
   reportFile: "./results/sale_validation_report.xlsx",
 
   // Sale Details
-  couponCode: process.env.COUPON_CODE || "REFRESH50",        // The coupon code to validate
-  saleName: process.env.SALE_NAME || "fresh finds july", // The sale text expected in banners
+  couponCode: process.env.COUPON_CODE || "BHARAT79",        // The coupon code to validate
+  saleName: process.env.SALE_NAME || "independence day sale", // The sale text expected in banners
 
   // Selectors (Update these if the website's DOM changes)
   selectors: {
