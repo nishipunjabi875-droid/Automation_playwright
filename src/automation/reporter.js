@@ -896,13 +896,33 @@ class Reporter {
         </div>
 
         <!-- Screenshot Toolbar -->
-        <div id="screenshotToolbar" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1.25rem; margin-bottom: 1rem;">
-          <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
-            <span style="color: var(--text-muted);">Sync Scrolling:</span>
-            <label class="switch" style="position: relative; display: inline-block; width: 36px; height: 20px;">
-              <input type="checkbox" id="syncScrollToggle" checked style="opacity: 0; width: 0; height: 0;">
-              <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .3s; border-radius: 20px;"></span>
-            </label>
+        <div id="screenshotToolbar" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1.25rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+              <span style="color: var(--text-muted);">Sync Scrolling:</span>
+              <label class="switch" style="position: relative; display: inline-block; width: 36px; height: 20px;">
+                <input type="checkbox" id="syncScrollToggle" checked style="opacity: 0; width: 0; height: 0;">
+                <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .3s; border-radius: 20px;"></span>
+              </label>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+              <span style="color: var(--text-muted);">Display Size:</span>
+              <div class="btn-group" style="display: flex; gap: 4px; background: rgba(255,255,255,0.05); padding: 2px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <button class="size-btn active" onclick="setScreenshotSize('small')">Fit (300px)</button>
+                <button class="size-btn" onclick="setScreenshotSize('medium')">Medium (500px)</button>
+                <button class="size-btn" onclick="setScreenshotSize('large')">Large (750px)</button>
+                <button class="size-btn" onclick="setScreenshotSize('full')">Full Width</button>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+              <span style="color: var(--text-muted);">Zoom Level:</span>
+              <div class="btn-group" style="display: flex; gap: 4px; background: rgba(255,255,255,0.05); padding: 2px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <button class="size-btn" onclick="adjustZoom(-0.15)" title="Zoom Out">-</button>
+                <span id="zoomLevelText" style="font-weight: 700; color: var(--neon-blue); min-width: 44px; text-align: center; line-height: 22px; font-size: 0.8rem;">100%</span>
+                <button class="size-btn" onclick="adjustZoom(0.15)" title="Zoom In">+</button>
+                <button class="size-btn" onclick="resetZoom()" title="Reset Zoom">Reset</button>
+              </div>
+            </div>
           </div>
           <div style="font-size: 0.8rem; color: var(--text-muted);">
             💡 <em>Click any screenshot to expand to full size for pixel-perfect detail comparison.</em>
@@ -1056,6 +1076,7 @@ class Reporter {
 
       renderTable();
       setViewMode(viewMode);
+      resetZoom();
       
       // Re-apply current size selection
       const activeSizeBtn = document.querySelector('.size-btn.active');
@@ -1329,6 +1350,45 @@ class Reporter {
       }
     }
 
+    let currentZoom = 1.0;
+    let currentLightboxZoom = 1.0;
+
+    function adjustZoom(delta) {
+      setZoom(currentZoom + delta);
+    }
+
+    function resetZoom() {
+      setZoom(activePageId.includes('mobile') ? 1.25 : 1.0);
+    }
+
+    function setZoom(level) {
+      currentZoom = Math.max(0.5, Math.min(3.0, parseFloat(level.toFixed(2))));
+      document.getElementById('zoomLevelText').innerText = Math.round(currentZoom * 100) + '%';
+      document.querySelectorAll('.screenshot-img').forEach(img => {
+        img.style.transform = 'scale(' + currentZoom + ')';
+        img.style.transformOrigin = 'top left';
+      });
+    }
+
+    function adjustLightboxZoom(delta) {
+      setLightboxZoom(currentLightboxZoom + delta);
+    }
+
+    function resetLightboxZoom() {
+      setLightboxZoom(1.0);
+    }
+
+    function setLightboxZoom(level) {
+      currentLightboxZoom = Math.max(0.5, Math.min(4.0, parseFloat(level.toFixed(2))));
+      const txt = document.getElementById('lightboxZoomText');
+      if (txt) txt.innerText = Math.round(currentLightboxZoom * 100) + '%';
+      const img = document.getElementById('lightboxImg');
+      if (img) {
+        img.style.transform = 'scale(' + currentLightboxZoom + ')';
+        img.style.transformOrigin = 'top center';
+      }
+    }
+
     // Lightbox modal functions for full scale view
     function openLightbox(viewType) {
       currentLightboxView = viewType;
@@ -1375,6 +1435,7 @@ class Reporter {
     
     function closeLightbox() {
       document.getElementById('lightboxModal').style.display = 'none';
+      resetLightboxZoom();
     }
     
     function selectLightboxView(viewType) {
