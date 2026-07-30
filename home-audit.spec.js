@@ -246,7 +246,14 @@ async function runAuditForView(page, pageConfig, viewId, viewName, baseline, mod
   for (const comp of pageConfig.components) {
     if (comp.multi) {
       const locator = page.locator(comp.selector);
-      const count = Math.min(await locator.count(), 12);
+      const allNodes = await locator.all();
+      const visibleNodes = [];
+      for (const node of allNodes) {
+        if (await node.isVisible().catch(() => false)) {
+          visibleNodes.push(node);
+        }
+      }
+      const count = Math.min(visibleNodes.length, 12);
       
       if (count === 0) {
         const subCompId = `${comp.id}_0`;
@@ -277,8 +284,8 @@ async function runAuditForView(page, pageConfig, viewId, viewName, baseline, mod
         }
       } else {
         for (let i = 0; i < count; i++) {
-          const element = locator.nth(i);
-          const isPresent = await element.isVisible().catch(() => false);
+          const element = visibleNodes[i];
+          const isPresent = true;
           const subCompId = `${comp.id}_${i}`;
           const subCompName = `${comp.name} #${i + 1}`;
           
@@ -381,18 +388,11 @@ async function runAuditForView(page, pageConfig, viewId, viewName, baseline, mod
       }
     } else {
       const locator = page.locator(comp.selector);
-      const count = await locator.count();
+      const allNodes = await locator.all();
       let element = null;
       let isPresent = false;
       
-      for (let i = 0; i < count; i++) {
-        const el = locator.nth(i);
-        if (await el.isVisible().catch(() => false)) {
-          element = el;
-          isPresent = true;
-          break;
-        }
-        await el.scrollIntoViewIfNeeded({ timeout: 1000 }).catch(() => {});
+      for (const el of allNodes) {
         if (await el.isVisible().catch(() => false)) {
           element = el;
           isPresent = true;
@@ -400,8 +400,8 @@ async function runAuditForView(page, pageConfig, viewId, viewName, baseline, mod
         }
       }
       
-      if (!isPresent) {
-        element = locator.first();
+      if (!isPresent && allNodes.length > 0) {
+        element = allNodes[0];
       }
 
       const baselineComp = pageBaseline ? pageBaseline.components.find(c => c.id === comp.id) : null;
@@ -583,7 +583,6 @@ async function dismissPopups(page) {
       '[aria-label="Close"]',
       '#close-login',
       '.close-login',
-      'button[class*="close"]',
       '.newsletter-close'
     ];
     for (const sel of closeSelectors) {

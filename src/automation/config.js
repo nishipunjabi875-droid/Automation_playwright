@@ -67,7 +67,7 @@ module.exports = {
         {
           id: 'footer',
           name: 'Footer Section',
-          selector: '.style_footerSection__KdicH, footer, #footer, [class*="footer" i], [class*="Footer"], section.bg-white.py-5:has-text("Woodenstreet.com"), div[class*="footerSection"]',
+          selector: '.style_footerSection__KdicH, footer, #footer, section.bg-lightgrayColor, section:has-text("OUR COMPANY"), div[class*="footerSection"]',
           checkAttrs: ['innerText'],
           optional: true
         }
