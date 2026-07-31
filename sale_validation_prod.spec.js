@@ -1,6 +1,5 @@
-// sale_validation.spec.js
-// Automation script to validate banners and coupons across various pages during a sale.
-// Configured to be reusable for future sales by changing the CONFIG block below.
+// sale_validation_prod.spec.js
+// Automation script to validate banners and coupons on Production environment (www.woodenstreet.com).
 
 const { test, expect, chromium, devices } = require("@playwright/test");
 const fs = require("fs");
@@ -8,23 +7,22 @@ const path = require("path");
 const xlsx = require("xlsx");
 
 // ─── CONFIGURATION ───────────────────────────────────────────────────────────
-// Update these values for each new sale or if the input file changes.
 const CONFIG = {
   // Input and Output
-  inputFile: process.env.INPUT_FILE || "./sale_urls.csv", // Excel or CSV file containing URLs
+  inputFile: process.env.INPUT_FILE || "./sale_urls.csv", // CSV containing Production URLs
   urlColumnName: "Information Pages Links", // Column header containing the URLs
-  baseUrl: process.env.BASE_URL || "https://www.woodenstreet.com/", // Base domain
+  baseUrl: process.env.BASE_URL || "https://www.woodenstreet.com/", // Production Base domain
   outputDir: "./results/prod",
   screenshotsDir: "./results/prod/screenshots",
   reportFile: "./results/sale_validation_report_prod.xlsx",
 
   // Sale Details
-  couponCode: process.env.COUPON_CODE || "BHARAT79",        // The coupon code to validate
-  saleName: process.env.SALE_NAME || "independence day sale", // The sale text expected in banners
+  couponCode: process.env.COUPON_CODE || "BHARAT79",       // Coupon code to validate on Production
+  saleName: process.env.SALE_NAME || "independence day sale",     // Sale text expected in banners
   previousCouponCode: process.env.PREVIOUS_COUPON_CODE || "REFRESH50", // Previous coupon code
   previousSaleName: process.env.PREVIOUS_SALE_NAME || "fresh finds july", // Previous sale text
 
-  // Selectors (Update these if the website's DOM changes)
+  // Selectors
   selectors: {
     // PDP (Product Details Page)
     productPrice: [
@@ -52,8 +50,8 @@ const CONFIG = {
     ]
   },
 
-  waitUntil: "load", // Wait until the load event fires
-  settleMs: 2500,    // Time to wait for lazy-loaded elements to appear
+  waitUntil: "load",
+  settleMs: 2500,
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -65,7 +63,6 @@ const C = {
 };
 const clr = (col, s) => `${col}${s}${C.reset}`;
 const trunc = (s, n) => String(s).length > n ? String(s).slice(0, n - 1) + "…" : String(s);
-// ─────────────────────────────────────────────────────────────────────────────
 
 // ─── INPUT READER ────────────────────────────────────────────────────────────
 function loadTestCasesSync() {
@@ -87,7 +84,7 @@ function loadTestCasesSync() {
     if (lines.length > 1) {
       const parseRow = (line) => {
         const cols = []; let cur = "", inQ = false;
-        for (let i = 0; i < line.length; i++) {
+        for (let i=0; i<line.length; i++) {
           const ch = line[i];
           if (ch === '"') inQ = !inQ;
           else if (ch === "," && !inQ) { cols.push(cur.trim()); cur = ""; }
@@ -105,21 +102,18 @@ function loadTestCasesSync() {
     }
   }
 
-  // Find the URL robustly
   return rows.map(r => {
     let url = "";
-    // Priority: the explicit column
     const urlKey = Object.keys(r).find(k => k.trim().toLowerCase() === CONFIG.urlColumnName.toLowerCase());
     if (urlKey && r[urlKey]) {
-      url = r[urlKey];
+        url = r[urlKey];
     } else {
-      // Fallback: any column that starts with http
-      for (const val of Object.values(r)) {
-        if (typeof val === 'string' && val.startsWith('http')) {
-          url = val;
-          break;
+        for (const val of Object.values(r)) {
+            if (typeof val === 'string' && val.startsWith('http')) {
+                url = val;
+                break;
+            }
         }
-      }
     }
     return { url };
   }).filter(r => r.url && r.url.trim() !== "");
@@ -135,7 +129,7 @@ function detectPageType(urlStr) {
   if (path.includes("/cart")) return "cart";
   if (path.endsWith(".html") || path.includes("/product/")) return "pdp";
   if (path.includes("/info") || path.includes("/about") || path.includes("/contact")) return "information";
-
+  
   return "category";
 }
 
@@ -161,7 +155,7 @@ async function checkElementContainsText(page, selectorList, expectedText, elemen
           const isImg = await el.evaluate(n => n.tagName.toLowerCase() === 'img');
           const alt = isImg ? (await el.getAttribute('alt')) || "" : "";
           const src = isImg ? (await el.getAttribute('src')) || "" : "";
-
+          
           const rawText = text + " " + alt + " " + src;
           const combinedStr = rawText.toLowerCase();
           if (!extractedCoupon) extractedCoupon = extractCoupon(rawText);
@@ -173,42 +167,41 @@ async function checkElementContainsText(page, selectorList, expectedText, elemen
           }
         }
       }
-    } catch { }
+    } catch {}
   }
-
-  // Fallback: search all images and body text for either term
+  
   try {
-    const bodyText = await page.evaluate(() => document.body.innerText);
-    const lowerBody = bodyText.toLowerCase();
-
-    const imgs = await page.$$eval('img', imgs =>
-      imgs.filter(img => {
-        const rect = img.getBoundingClientRect();
-        return rect.width > 0 && rect.height > 0;
-      }).map(i => {
-        const combined = (i.alt || "") + " " + (i.src || "");
-        return { raw: combined, lower: combined.toLowerCase() };
-      })
-    );
-
-    if (!extractedCoupon) extractedCoupon = extractCoupon(bodyText);
-    if (!extractedCoupon) {
-      for (const img of imgs) {
-        extractedCoupon = extractCoupon(img.raw);
-        if (extractedCoupon) break;
+      const bodyText = await page.evaluate(() => document.body.innerText);
+      const lowerBody = bodyText.toLowerCase();
+      
+      const imgs = await page.$$eval('img', imgs => 
+        imgs.filter(img => {
+          const rect = img.getBoundingClientRect();
+          return rect.width > 0 && rect.height > 0;
+        }).map(i => {
+          const combined = (i.alt || "") + " " + (i.src || "");
+          return { raw: combined, lower: combined.toLowerCase() };
+        })
+      );
+      
+      if (!extractedCoupon) extractedCoupon = extractCoupon(bodyText);
+      if (!extractedCoupon) {
+          for (const img of imgs) {
+              extractedCoupon = extractCoupon(img.raw);
+              if (extractedCoupon) break;
+          }
       }
-    }
 
-    for (const term of termsToCheck) {
-      if (lowerBody.includes(term)) {
-        return { found: true, message: `✅ Found '${term}' in visible page text (generic fallback)`, actualCoupon: extractedCoupon || CONFIG.couponCode };
+      for (const term of termsToCheck) {
+         if (lowerBody.includes(term)) {
+             return { found: true, message: `✅ Found '${term}' in visible page text (generic fallback)`, actualCoupon: extractedCoupon || CONFIG.couponCode };
+         }
+         if (imgs.some(imgObj => imgObj.lower.includes(term))) {
+             return { found: true, message: `✅ Found visible image banner containing '${term}'`, actualCoupon: extractedCoupon || CONFIG.couponCode };
+         }
       }
-      if (imgs.some(imgObj => imgObj.lower.includes(term))) {
-        return { found: true, message: `✅ Found visible image banner containing '${term}'`, actualCoupon: extractedCoupon || CONFIG.couponCode };
-      }
-    }
-  } catch (err) { }
-
+  } catch (err) {}
+  
   return { found: false, message: `❌ Missing expected sale text or coupon for ${elementName}`, actualCoupon: extractedCoupon || "None Found" };
 }
 
@@ -222,13 +215,13 @@ async function hoverAndCheckTooltip(page, infoBtnSelectors, tooltipSelectors, ex
 
         const result = await checkElementContainsText(page, tooltipSelectors, expectedText, "Tooltip/Hover Info");
         if (result.found) return result;
-
+        
         const bodyText = await page.locator('body').textContent();
         if (bodyText && bodyText.toLowerCase().includes(expectedText.toLowerCase())) {
-          return { found: true, message: `✅ Found '${expectedText}' after hovering ${btnSel} (caught in body)`, actualCoupon: CONFIG.couponCode };
+           return { found: true, message: `✅ Found '${expectedText}' after hovering ${btnSel} (caught in body)`, actualCoupon: CONFIG.couponCode };
         }
       }
-    } catch { }
+    } catch {}
   }
   return { found: false, message: `❌ Failed to find or hover info button to check for '${expectedText}'`, actualCoupon: "None Found" };
 }
@@ -265,64 +258,6 @@ async function checkPreviousSaleNotVisible(page) {
   return { foundOld: false, message: `✅ Verified: No previous sale ('${CONFIG.previousSaleName}' / '${CONFIG.previousCouponCode}') found on page.` };
 }
 
-async function checkBannerRedirections(page, pageType, vpName) {
-  const banners = [];
-  const selectors = [...CONFIG.selectors.bigBanner, ...CONFIG.selectors.midStripBanner, ...CONFIG.selectors.topStripBanner];
-
-  // Find all links wrapping elements that match banner selectors
-  for (const sel of selectors) {
-    try {
-      const els = await page.$$(sel);
-      for (const el of els) {
-        if (await el.isVisible()) {
-          // Try to get the closest anchor tag
-          const href = await el.evaluate(n => {
-            const a = n.closest('a');
-            return a ? a.href : null;
-          });
-          if (href && !href.startsWith('javascript:')) {
-            banners.push({ selector: sel, href });
-          }
-        }
-      }
-    } catch { }
-  }
-
-  // De-duplicate
-  const uniqueBanners = [];
-  const seen = new Set();
-  for (const b of banners) {
-    if (!seen.has(b.href)) {
-      seen.add(b.href);
-      uniqueBanners.push(b);
-    }
-  }
-
-  const results = [];
-  for (const b of uniqueBanners) {
-    let status = "ERROR";
-    let httpCode = "N/A";
-    try {
-      const response = await page.request.get(b.href, { maxRedirects: 5, timeout: 10000 });
-      httpCode = response.status();
-      status = (httpCode >= 200 && httpCode < 400) ? "PASS" : "FAIL";
-    } catch (err) {
-      status = "ERROR";
-      httpCode = err.message.split('\\n')[0];
-    }
-    results.push({
-      url: page.url(),
-      view: vpName,
-      page_type: pageType,
-      banner_selector: b.selector,
-      redirection_link: b.href,
-      http_status: httpCode,
-      status: status
-    });
-  }
-  return results;
-}
-
 // ─── REPORT WRITER ───────────────────────────────────────────────────────────
 function writeReport(results, redirectionResults = [], heroBannerResults = []) {
   fs.mkdirSync(CONFIG.outputDir, { recursive: true });
@@ -354,16 +289,16 @@ function writeReport(results, redirectionResults = [], heroBannerResults = []) {
   // 3. Hero Banner Validation Sheet
   if (heroBannerResults && heroBannerResults.length > 0) {
     const heroHeaders = [
-      "Slide #",
-      "Banner Image URL",
-      "Expected Category",
-      "Target URL",
-      "Actual URL Page Loaded",
-      "Page H1 Header",
-      "Page Title",
-      "HTTP Status",
-      "Navigation Status",
-      "Category Match",
+      "Slide #", 
+      "Banner Image URL", 
+      "Expected Category", 
+      "Target URL", 
+      "Actual URL Page Loaded", 
+      "Page H1 Header", 
+      "Page Title", 
+      "HTTP Status", 
+      "Navigation Status", 
+      "Category Match", 
       "Screenshot Reference"
     ];
     const heroRows = heroBannerResults.map(r => [
@@ -388,7 +323,7 @@ function writeReport(results, redirectionResults = [], heroBannerResults = []) {
 
   // 4. Summary Sheet
   const summaryRows = [
-    ["Sale Validation Report", ""],
+    ["Sale Validation Report (Production)", ""],
     ["Run Date", new Date().toLocaleString()],
     ["Coupon Code", CONFIG.couponCode],
     ["Sale Text", CONFIG.saleName],
@@ -398,24 +333,7 @@ function writeReport(results, redirectionResults = [], heroBannerResults = []) {
     ["✅ PASS", results.filter(r => r.status === "PASS").length],
     ["❌ FAIL", results.filter(r => r.status === "FAIL").length],
     ["⚠️ ERROR/WARN", results.filter(r => r.status === "ERROR" || r.status === "WARN").length],
-    ["", ""],
-    ["-- Banner Redirections --", ""],
-    ["Total Links Checked", redirectionResults.length],
-    ["✅ PASS (200-399)", redirectionResults.filter(r => r.status === "PASS").length],
-    ["❌ FAIL (400+ or Error)", redirectionResults.filter(r => r.status !== "PASS").length],
   ];
-
-  if (heroBannerResults && heroBannerResults.length > 0) {
-    summaryRows.push(
-      ["", ""],
-      ["-- Hero Banner Validation --", ""],
-      ["Total Hero Banners Checked", heroBannerResults.length],
-      ["✅ Navigation PASS", heroBannerResults.filter(r => r.status === "PASS").length],
-      ["❌ Navigation FAIL/ERROR", heroBannerResults.filter(r => r.status !== "PASS").length],
-      ["✅ Category Match PASS", heroBannerResults.filter(r => r.matchStatus === "PASS").length],
-      ["❌ Category Match FAIL", heroBannerResults.filter(r => r.matchStatus !== "PASS").length]
-    );
-  }
 
   const ss = xlsx.utils.aoa_to_sheet(summaryRows);
   ss["!cols"] = [{ wch: 35 }, { wch: 30 }];
@@ -424,7 +342,6 @@ function writeReport(results, redirectionResults = [], heroBannerResults = []) {
   xlsx.writeFile(wb, CONFIG.reportFile);
 }
 
-// ─── HERO BANNER VALIDATION HELPERS ──────────────────────────────────────────
 const HERO_CATEGORIES_MAP = {
   "sofa": "Sofa Sets",
   "all-modular-furniture": "Modular Furniture",
@@ -463,7 +380,6 @@ async function validateHeroBanners(homepagePage, browser) {
         });
       }
     });
-    // Deduplicate
     const seen = new Set();
     const unique = [];
     for (const item of list) {
@@ -507,12 +423,9 @@ async function validateHeroBanners(homepagePage, browser) {
       }
 
       pageTitle = await page.title();
-
-      // Get the page H1
       pageH1 = await page.locator('h1').first().textContent().catch(() => "");
       pageH1 = pageH1 ? pageH1.trim() : "";
 
-      // Validate match
       const checkText = (pageH1 + " " + pageTitle).toLowerCase();
       const keywords = expectedCategory.toLowerCase().split(/\s+/).filter(w => w.length > 2);
       let matches = false;
@@ -526,7 +439,6 @@ async function validateHeroBanners(homepagePage, browser) {
         matchStatus = "PASS";
       }
 
-      // Take screenshot
       screenshotName = `hero_banner_cat_${index}.png`;
       await page.screenshot({ path: path.join(CONFIG.screenshotsDir, screenshotName) });
 
@@ -536,7 +448,7 @@ async function validateHeroBanners(homepagePage, browser) {
       try {
         screenshotName = `hero_banner_err_${index}.png`;
         await page.screenshot({ path: path.join(CONFIG.screenshotsDir, screenshotName) });
-      } catch { }
+      } catch {}
     }
 
     results.push({
@@ -558,8 +470,8 @@ async function validateHeroBanners(homepagePage, browser) {
   return results;
 }
 
-test("Sale Validation - Desktop and Mobile", async ({ }, testInfo) => {
-  test.setTimeout(0); // Disable the Playwright test timeout since we process many URLs in one block
+test("Sale Validation - Production Environment", async ({}, testInfo) => {
+  test.setTimeout(0);
 
   fs.mkdirSync(CONFIG.outputDir, { recursive: true });
   fs.mkdirSync(CONFIG.screenshotsDir, { recursive: true });
@@ -570,17 +482,16 @@ test("Sale Validation - Desktop and Mobile", async ({ }, testInfo) => {
     return;
   }
 
-  console.log(`\n${clr(C.cyan + C.bold, `🚀 Starting Sale Validation for ${testCases.length} URLs (Desktop & Mobile)`)}`);
+  console.log(`\n${clr(C.cyan + C.bold, `🚀 Starting Production Sale Validation for ${testCases.length} URLs (Desktop & Mobile)`)}`);
 
   const headless = !process.argv.includes('--headed') && testInfo?.project?.use?.headless !== false;
-  const browser = await chromium.launch({
-    headless,
-    args: headless ? [] : ["--window-position=960,0", "--window-size=960,1000"]
+  const browser = await chromium.launch({ 
+    headless, 
+    args: headless ? [] : ["--window-position=960,0", "--window-size=960,1000"] 
   });
   const results = [];
   const heroBannerResults = [];
-
-  // Run homepage hero banner validation first on Desktop context
+  
   try {
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     const page = await context.newPage();
@@ -601,17 +512,16 @@ test("Sale Validation - Desktop and Mobile", async ({ }, testInfo) => {
 
   let testIndex = 1;
 
-  // Run viewports in parallel
   await Promise.all(viewports.map(async (vp) => {
     const context = await browser.newContext(vp.config);
     const page = await context.newPage();
-    page.setDefaultNavigationTimeout(20000); // 20 seconds timeout for pages
+    page.setDefaultNavigationTimeout(20000);
     page.setDefaultTimeout(10000);
 
     for (let i = 0; i < testCases.length; i++) {
       const tc = testCases[i];
       const currentTestIndex = testIndex++;
-
+      
       const result = {
         index: currentTestIndex, view: vp.name, url: tc.url, page_type: "", status: "PASS", notes: [], screenshot: ""
       };
@@ -628,17 +538,16 @@ test("Sale Validation - Desktop and Mobile", async ({ }, testInfo) => {
         result.page_type = detectPageType(page.url());
         const checks = [];
 
-        // ─── PAGE SPECIFIC VALIDATIONS ───────────────────────────────────────
         if (result.page_type === "pdp") {
           checks.push(await hoverAndCheckTooltip(page, CONFIG.selectors.infoButton, CONFIG.selectors.tooltipBox, CONFIG.couponCode));
-        }
+        } 
         else if (result.page_type === "cart") {
           checks.push(await checkElementContainsText(page, [...CONFIG.selectors.couponDisplay, 'body'], CONFIG.couponCode, "Cart Coupon Area"));
-        }
+        } 
         else if (result.page_type === "category" || result.page_type === "information") {
           checks.push(await checkElementContainsText(page, CONFIG.selectors.bigBanner, CONFIG.saleName, "Big Category Banner"));
           checks.push(await checkElementContainsText(page, CONFIG.selectors.midStripBanner, CONFIG.saleName, "Mid Strip Banner"));
-        }
+        } 
         else if (result.page_type === "home") {
           checks.push(await checkElementContainsText(page, CONFIG.selectors.bigBanner, CONFIG.saleName, "Big Banner"));
         }
@@ -646,7 +555,6 @@ test("Sale Validation - Desktop and Mobile", async ({ }, testInfo) => {
         // Validate that previous sale text/links are NOT present
         const oldSaleCheck = await checkPreviousSaleNotVisible(page);
 
-        // ─── EVALUATE CHECKS ─────────────────────────────────────────────────
         let hasFailure = false;
         let actualCoupon = "None Found";
         for (const chk of checks) {
@@ -685,11 +593,11 @@ test("Sale Validation - Desktop and Mobile", async ({ }, testInfo) => {
           const sName = `err_${vp.name}_${currentTestIndex}.png`;
           await page.screenshot({ path: path.join(CONFIG.screenshotsDir, sName) });
           result.screenshot = sName;
-        } catch { }
+        } catch {}
       }
 
       results.push(result);
-
+      
       const statusColor = result.status === "PASS" ? C.green : result.status === "FAIL" ? C.red : C.yellow;
       console.log(`[${vp.name}] ${trunc(tc.url, 50)} ↳ ${clr(statusColor + C.bold, result.status)} [${result.page_type}]`);
       if (result.status !== "PASS") {
@@ -701,12 +609,11 @@ test("Sale Validation - Desktop and Mobile", async ({ }, testInfo) => {
   }));
 
   await browser.close();
-
-  // Sort results by index so they are in consistent order in report
+  
   results.sort((a, b) => a.index - b.index);
-
+  
   writeReport(results, [], heroBannerResults);
-
-  console.log(`\n${clr(C.cyan + C.bold, "✅ Validation complete!")}`);
+  
+  console.log(`\n${clr(C.cyan + C.bold, "✅ Production Sale Validation complete!")}`);
   console.log(`Report generated at: ${CONFIG.reportFile}`);
 });

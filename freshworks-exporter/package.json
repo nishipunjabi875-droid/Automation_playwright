@@ -1,0 +1,27 @@
+{
+  "name": "freshworks-omni-exporter",
+  "version": "1.0.0",
+  "description": "Production-grade Freshworks Omni / Freshchat conversation & message extraction tool",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "freshworks",
+    "freshchat",
+    "omni",
+    "export",
+    "whatsapp",
+    "instagram",
+    "facebook-messenger",
+    "conversations"
+  ],
+  "author": "Deepmind AI Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cli-progress": "^3.12.0",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0"
+  }
+}

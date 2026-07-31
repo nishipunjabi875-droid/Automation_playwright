@@ -5,7 +5,7 @@ test.describe('WoodenStreet Aligne Collection Validations', () => {
     test('Verify product prices on collection page match the product page', async ({ page }) => {
         test.setTimeout(300000); // 5 minutes timeout to ensure we can check multiple products
 
-        const collectionUrl = 'https://www.woodenstreet.com/collection/aligne';
+        const collectionUrl = 'ehttps://www.woodenstreet.com/collection/aligne';
         console.log(`Navigating to collection page: ${collectionUrl}`);
         await page.goto(collectionUrl, { waitUntil: 'domcontentloaded' });
 
