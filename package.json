@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "ui-audit:capture": "node src/automation/run.js --mode=capture",
     "ui-audit:compare": "node src/automation/run.js --mode=compare",
-    "dev:faq": "node faq-clone/server.js"
+    "dev:faq": "node faq-clone/server.js",
+    "test:cart-qa": "npx playwright test cart-deep-qa.spec.js --config=playwright.cart-qa.config.js"
   },
   "keywords": [],
   "author": "",

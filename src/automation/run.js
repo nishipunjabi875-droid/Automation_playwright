@@ -51,8 +51,8 @@ console.log(`🚀 COMPONENT AUDIT AUTOMATION LAUNCHER`);
 console.log(`   Mode: ${mode.toUpperCase()}`);
 console.log(`=========================================`);
 
-// Spawn Playwright Test runner specs for Home Page, PDP, and Category Page
-const result = spawnSync('npx', ['playwright', 'test', 'home-audit.spec.js', 'pdp-audit.spec.js', 'category-audit.spec.js', ...extraArgs], {
+// Spawn Playwright Test runner specs for Home Page, PDP, Category Page, and Store Page
+const result = spawnSync('npx', ['playwright', 'test', 'home-audit.spec.js', 'pdp-audit.spec.js', 'category-audit.spec.js', 'store-audit.spec.js', ...extraArgs], {
   stdio: 'inherit',
   shell: true,
   env: { 

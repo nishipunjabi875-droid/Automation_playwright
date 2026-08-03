@@ -204,6 +204,65 @@ module.exports = {
           optional: true
         }
       ]
+    },
+    store: {
+      name: 'Offline Store Page',
+      url: 'https://www.woodenstreet.com/offline-furniture-store',
+      components: [
+        {
+          id: 'logo',
+          name: 'Header Logo',
+          selector: 'header img, .logo-box img, a.logo img, .style_headerLogo__r964U img, img[src*="mob-logo.svg"], img[src*="logo.svg"]',
+          checkAttrs: ['src', 'alt']
+        },
+        {
+          id: 'search-input',
+          name: 'Search Input',
+          selector: '#search, input[placeholder*="search" i], .search-box input, input[type="search"]',
+          checkAttrs: ['placeholder', 'type']
+        },
+        {
+          id: 'navigation',
+          name: 'Navigation Bar',
+          selector: 'nav.navigation, .menu-list, .navigation-menu, .style_headerSection___0VZL, #menutouch, .style_menu-mobile-btn__dfbgY, .style_menu-header__ILZYG',
+          checkAttrs: ['innerText']
+        },
+        {
+          id: 'store-title',
+          name: 'Store Page Heading',
+          selector: 'h1.style_subHeading__KJtt3, h1:has-text("Experience Stores"), h1',
+          checkAttrs: ['innerText']
+        },
+        {
+          id: 'city-search',
+          name: 'City Search Input',
+          selector: '#Search\\ city, input[placeholder*="City" i], .style_search-city-card-top__inG8m input',
+          checkAttrs: ['placeholder'],
+          optional: true
+        },
+        {
+          id: 'city-list',
+          name: 'City List Items',
+          selector: 'ul.style_city-list__NYYom li, .style_city-list__NYYom a, [class*="city-list"] li',
+          multi: true,
+          optional: true,
+          checkAttrs: ['innerText']
+        },
+        {
+          id: 'store-services',
+          name: 'Services at Store Section',
+          selector: 'section:has-text("Services at Store"), div:has-text("Services at Store")',
+          optional: true,
+          checkAttrs: ['innerText']
+        },
+        {
+          id: 'footer',
+          name: 'Footer Section',
+          selector: '.style_footerSection__KdicH, footer, #footer, [class*="footer" i], section.bg-lightgrayColor',
+          checkAttrs: ['innerText'],
+          optional: true
+        }
+      ]
     }
   }
 };
